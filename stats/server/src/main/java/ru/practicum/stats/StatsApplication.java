@@ -12,6 +12,7 @@ public class StatsApplication {
     public static void main(String[] args) {
         SpringApplication.run(StatsApplication.class, args);
     }
+
     @Configuration
     public static class AppConfig {
         @Bean
