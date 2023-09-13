@@ -8,6 +8,7 @@ import ru.practicum.stats.hit.mapper.ViewStatsMapper;
 import ru.practicum.stats.hit.repository.EndpointHitRepository;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -17,6 +18,7 @@ public class EndpointHitServiceImpl implements EndpointHitService {
     private final EndpointHitRepository endpointHitRepository;
     private final ViewStatsMapper viewStatsMapper;
 
+    public static final DateTimeFormatter DATE_TIME_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     public EndpointHitServiceImpl(HitMapper hitMapper, EndpointHitRepository endpointHitRepository,
             ViewStatsMapper viewStatsMapper) {
         this.hitMapper = hitMapper;
@@ -31,14 +33,17 @@ public class EndpointHitServiceImpl implements EndpointHitService {
     }
 
     @Override
-    public List<ViewStatsDto> getStats(LocalDateTime start, LocalDateTime end, List<String> uris, boolean isUniqueIP) {
+    public List<ViewStatsDto> getStats(String start, String end, List<String> uris, boolean isUniqueIP) {
+        LocalDateTime startDT = LocalDateTime.parse(start, DATE_TIME_FORMAT);
+        LocalDateTime endDT = LocalDateTime.parse(end, DATE_TIME_FORMAT);
+
         if (isUniqueIP) {
-            return endpointHitRepository.findViewStatsUniqueIp(start, end, uris)
+            return endpointHitRepository.findViewStatsUniqueIp(startDT, endDT, uris)
                     .stream()
                     .map(viewStatsMapper::toDto)
                     .collect(Collectors.toList());
         } else {
-            return endpointHitRepository.findViewStats(start, end, uris)
+            return endpointHitRepository.findViewStats(startDT, endDT, uris)
                     .stream()
                     .map(viewStatsMapper::toDto)
                     .collect(Collectors.toList());

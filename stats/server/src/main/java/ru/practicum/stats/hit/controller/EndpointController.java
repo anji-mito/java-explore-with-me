@@ -23,8 +23,8 @@ public class EndpointController {
 
     @GetMapping("/stats")
     @ResponseStatus(HttpStatus.OK)
-    public List<ViewStatsDto> get(@RequestParam LocalDateTime start,
-            @RequestParam LocalDateTime end,
+    public List<ViewStatsDto> get(@RequestParam String start,
+            @RequestParam String end,
             @RequestParam List<String> uris,
             @RequestParam(defaultValue = "false") boolean unique) {
         log.info("get start={}, end={}, uris={}, unique={}", start, end, uris, unique);
