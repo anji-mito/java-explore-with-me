@@ -36,7 +36,6 @@ public class EndpointHitServiceImpl implements EndpointHitService {
     public List<ViewStatsDto> getStats(String start, String end, List<String> uris, boolean isUniqueIP) {
         LocalDateTime startDT = LocalDateTime.parse(start, DATE_TIME_FORMAT);
         LocalDateTime endDT = LocalDateTime.parse(end, DATE_TIME_FORMAT);
-
         if (isUniqueIP) {
             return endpointHitRepository.findViewStatsUniqueIp(startDT, endDT, uris)
                     .stream()

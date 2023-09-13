@@ -6,7 +6,9 @@ import org.springframework.stereotype.Component;
 import ru.practicum.ewm.EndpointHitDto;
 import ru.practicum.stats.hit.model.EndpointHit;
 
-import java.util.Objects;
+import java.time.LocalDateTime;
+
+import static ru.practicum.stats.hit.service.EndpointHitServiceImpl.DATE_TIME_FORMAT;
 
 @Component
 public class HitMapper {
@@ -15,10 +17,19 @@ public class HitMapper {
     private ModelMapper mapper;
 
     public EndpointHit toEntity(EndpointHitDto dto) {
-        return Objects.isNull(dto) ? null : mapper.map(dto, EndpointHit.class);
+        return EndpointHit.builder()
+                .app(dto.getApp())
+                .ip(dto.getIp())
+                .uri(dto.getUri())
+                .timestamp(LocalDateTime.parse(dto.getTimestamp(), DATE_TIME_FORMAT))
+                .build();
     }
 
     public EndpointHitDto toDto(EndpointHit entity) {
-        return Objects.isNull(entity) ? null : mapper.map(entity, EndpointHitDto.class);
+        return EndpointHitDto.builder()
+                .app(entity.getApp())
+                .ip(entity.getIp())
+                .uri(entity.getUri())
+                .build();
     }
 }
