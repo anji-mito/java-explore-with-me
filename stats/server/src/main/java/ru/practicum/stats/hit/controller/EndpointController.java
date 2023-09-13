@@ -24,7 +24,7 @@ public class EndpointController {
     @ResponseStatus(HttpStatus.OK)
     public List<ViewStatsDto> get(@RequestParam String start,
             @RequestParam String end,
-            @RequestParam List<String> uris,
+            @RequestParam(required = false) List<String> uris,
             @RequestParam(defaultValue = "false") boolean unique) {
         log.info("get start={}, end={}, uris={}, unique={}", start, end, uris, unique);
         return endpointHitService.getStats(start, end, uris, unique);
