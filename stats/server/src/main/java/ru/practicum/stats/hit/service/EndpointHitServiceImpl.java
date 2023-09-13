@@ -14,11 +14,11 @@ import java.util.stream.Collectors;
 
 @Service
 public class EndpointHitServiceImpl implements EndpointHitService {
+    public static final DateTimeFormatter DATE_TIME_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     private final HitMapper hitMapper;
     private final EndpointHitRepository endpointHitRepository;
     private final ViewStatsMapper viewStatsMapper;
 
-    public static final DateTimeFormatter DATE_TIME_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     public EndpointHitServiceImpl(HitMapper hitMapper, EndpointHitRepository endpointHitRepository,
             ViewStatsMapper viewStatsMapper) {
         this.hitMapper = hitMapper;

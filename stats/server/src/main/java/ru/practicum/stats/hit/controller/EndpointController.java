@@ -8,7 +8,6 @@ import ru.practicum.ewm.EndpointHitDto;
 import ru.practicum.ewm.ViewStatsDto;
 import ru.practicum.stats.hit.service.EndpointHitService;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
