@@ -30,7 +30,7 @@ public class EndpointController {
         return endpointHitService.getStats(start, end, uris, unique);
     }
 
-    @PostMapping(path = "/hits")
+    @PostMapping(path = "/hit")
     @ResponseStatus(HttpStatus.CREATED)
     public EndpointHitDto add(@RequestBody EndpointHitDto endpointHitDto) {
         log.info("Endpoint hit added: {}", endpointHitDto);
