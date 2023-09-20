@@ -1,8 +1,14 @@
 package ru.practicum.ewmmainservice.event.dto;
 
+import lombok.*;
 import ru.practicum.ewmmainservice.category.dto.CategoryDto;
 import ru.practicum.ewmmainservice.user.dto.UserShortDto;
 
+@AllArgsConstructor
+@Getter
+@Setter
+@NoArgsConstructor
+@Builder
 public class EventShortDto {
     private String annotation;
     private CategoryDto category;
