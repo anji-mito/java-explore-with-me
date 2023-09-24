@@ -13,6 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 public class PublicCategoryController {
     private final CategoryService categoryService;
+
     @GetMapping("/{id}")
     public CategoryDto getById(@PathVariable long id) {
         return categoryService.getById(id);
@@ -22,6 +23,6 @@ public class PublicCategoryController {
     public List<CategoryDto> getAll(
             @RequestParam(required = false, defaultValue = "0") @NotNull Integer from,
             @RequestParam(required = false, defaultValue = "10") @NotNull Integer size) {
-        return categoryService.getAll(from/size, size);
+        return categoryService.getAll(from / size, size);
     }
 }

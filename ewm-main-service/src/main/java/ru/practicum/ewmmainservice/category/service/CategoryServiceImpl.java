@@ -1,7 +1,6 @@
 package ru.practicum.ewmmainservice.category.service;
 
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.practicum.ewmmainservice.category.dto.CategoryDto;
 import ru.practicum.ewmmainservice.category.dto.NewCategoryDto;

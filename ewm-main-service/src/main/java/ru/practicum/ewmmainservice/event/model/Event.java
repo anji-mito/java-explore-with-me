@@ -22,12 +22,8 @@ public class Event {
     private long id;
     private String annotation;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "event_category",
-            joinColumns = @JoinColumn(name = "event_id"),
-            inverseJoinColumns = @JoinColumn(name = "category_id")
-    )
+    @OneToMany(fetch = FetchType.EAGER)
+    @JoinColumn(name = "category_id")
     private List<Category> categories;
 
     @Column(name = "confirmed_requests")
@@ -40,11 +36,11 @@ public class Event {
     @Column(name = "event_date")
     private LocalDateTime eventDate;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "initiator_id", referencedColumnName = "id")
     private User initiator;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "location_id", referencedColumnName = "id")
     private Location location;
 

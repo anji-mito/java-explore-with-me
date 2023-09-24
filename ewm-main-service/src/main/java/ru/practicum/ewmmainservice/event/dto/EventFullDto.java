@@ -5,13 +5,15 @@ import ru.practicum.ewmmainservice.category.dto.CategoryDto;
 import ru.practicum.ewmmainservice.event.model.Location;
 import ru.practicum.ewmmainservice.user.dto.UserShortDto;
 
+import java.util.List;
+
 @AllArgsConstructor
 @Builder
 @Data
 @NoArgsConstructor
 public class EventFullDto {
     private String annotation;
-    private CategoryDto category;
+    private List<CategoryDto> category;
     private long confirmedRequests;
     private String createdOn;
     private String description;
