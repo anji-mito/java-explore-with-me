@@ -1,6 +1,5 @@
 package ru.practicum.ewmmainservice.category.controller;
 
-import com.sun.istack.NotNull;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewmmainservice.category.dto.CategoryDto;
@@ -21,8 +20,8 @@ public class PublicCategoryController {
 
     @GetMapping
     public List<CategoryDto> getAll(
-            @RequestParam(required = false, defaultValue = "0") @NotNull Integer from,
-            @RequestParam(required = false, defaultValue = "10") @NotNull Integer size) {
+            @RequestParam(required = false, defaultValue = "0") Integer from,
+            @RequestParam(required = false, defaultValue = "10") Integer size) {
         return categoryService.getAll(from / size, size);
     }
 }

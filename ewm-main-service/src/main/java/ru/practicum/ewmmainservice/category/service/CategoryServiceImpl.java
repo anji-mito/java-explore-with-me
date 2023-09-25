@@ -6,6 +6,7 @@ import ru.practicum.ewmmainservice.category.dto.CategoryDto;
 import ru.practicum.ewmmainservice.category.dto.NewCategoryDto;
 import ru.practicum.ewmmainservice.category.mapper.CategoryMapper;
 import ru.practicum.ewmmainservice.category.repository.CategoryRepository;
+import ru.practicum.ewmmainservice.exception.NotFoundException;
 
 import javax.transaction.Transactional;
 import java.util.List;
@@ -31,7 +32,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public void removeById(Long id) {
-        if(categoryRepository.existsById(id))
+        if (categoryRepository.existsById(id))
             categoryRepository.deleteById(id);
     }
 
@@ -39,7 +40,8 @@ public class CategoryServiceImpl implements CategoryService {
     @Transactional
     public CategoryDto update(Long id, CategoryDto dto) {
         var categoryToUpdateOptional = categoryRepository.findById(id);
-        var categoryToUpdate = categoryToUpdateOptional.orElseThrow();
+        var categoryToUpdate = categoryToUpdateOptional.
+                orElseThrow(() -> new NotFoundException("Категория с id " + id + " не была найдена"));
         var name = dto.getName();
         if (name != null && name.length() > 0 && !Objects.equals(name, categoryToUpdate.getName())) {
             categoryToUpdate.setName(name);
@@ -60,6 +62,6 @@ public class CategoryServiceImpl implements CategoryService {
         return categoryRepository
                 .findById(id)
                 .map(categoryMapper::toDto)
-                .orElseThrow();
+                .orElseThrow(() -> new NotFoundException("Категория с id " + id + " не была найдена"));
     }
 }
