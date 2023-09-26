@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewmmainservice.category.dto.CategoryDto;
 import ru.practicum.ewmmainservice.category.service.CategoryService;
+import ru.practicum.ewmmainservice.exception.BadRequestException;
 
 import java.util.List;
 
@@ -22,6 +23,9 @@ public class PublicCategoryController {
     public List<CategoryDto> getAll(
             @RequestParam(required = false, defaultValue = "0") Integer from,
             @RequestParam(required = false, defaultValue = "10") Integer size) {
+        if (from > size || from < 0 || size < 1) {
+            throw new BadRequestException("Неверно введены данные для параметров запроса size и from");
+        }
         return categoryService.getAll(from / size, size);
     }
 }

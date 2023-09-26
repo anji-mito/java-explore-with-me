@@ -1,5 +1,6 @@
 package ru.practicum.ewmmainservice.event.service;
 
+import org.springframework.data.domain.PageRequest;
 import ru.practicum.ewmmainservice.event.dto.EventFullDto;
 import ru.practicum.ewmmainservice.event.dto.EventShortDto;
 import ru.practicum.ewmmainservice.event.dto.NewEventDto;
@@ -9,6 +10,7 @@ import ru.practicum.ewmmainservice.exception.NotFoundException;
 import ru.practicum.ewmmainservice.user.repository.UserRepository;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class EventServiceImpl implements EventService {
     private final EventRepository eventRepository;
@@ -24,6 +26,7 @@ public class EventServiceImpl implements EventService {
     @Override
     public List<EventShortDto> getEvents(String text, List<Integer> categories, boolean paid, String rangeStart,
             String rangeEnd, boolean onlyAvailable, String sort, int from, int size) {
+
         return null;
     }
 
@@ -35,7 +38,10 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public List<EventShortDto> getEventsByUser(long userId, int from, int size) {
-        return null;
+        return eventRepository.findAllByInitiatorId(userId, PageRequest.of(from, size))
+                .stream()
+                .map(eventMapper::toShortDto)
+                .collect(Collectors.toUnmodifiableList());
     }
 
     @Override
@@ -50,7 +56,8 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public EventFullDto getFullEventById(long id, long userId) {
-        return null;
+        return eventMapper.toDto(eventRepository.findByIdAndInitiatorId(id, userId)
+                .orElseThrow(() -> new NotFoundException("Событие с id " + id + " не был найден")));
     }
 
     @Override
