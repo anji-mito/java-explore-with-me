@@ -20,6 +20,7 @@ public class Event {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+    @Column(length = 1000)
     private String annotation;
 
     @OneToMany(fetch = FetchType.EAGER)
@@ -31,6 +32,7 @@ public class Event {
 
     @Column(name = "created_on")
     private LocalDateTime createdOn;
+    @Column(length = 1000)
     private String description;
 
     @Column(name = "event_date")
@@ -41,11 +43,8 @@ public class Event {
     private User initiator;
 
     @ManyToOne
-    @JoinColumn(name = "location_id", referencedColumnName = "id")
     private Location location;
-
     private boolean paid;
-
     @Column(name = "participant_limit")
     private int participantLimit;
 

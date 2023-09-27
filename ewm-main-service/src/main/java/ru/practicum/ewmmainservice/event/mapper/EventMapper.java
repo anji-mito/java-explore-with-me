@@ -28,7 +28,7 @@ public class EventMapper {
     public Event toEntity(NewEventDto dto) {
         return Event.builder()
                 .annotation(dto.getAnnotation())
-                .categories(List.of(Category.builder().id(dto.getCategoryId()).build()))
+                .categories(List.of(Category.builder().id(dto.getCategory()).build()))
                 .description(dto.getDescription())
                 .eventDate(LocalDateTime.parse(dto.getEventDate(), DATE_TIME_FORMAT))
                 .location(dto.getLocation())

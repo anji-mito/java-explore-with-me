@@ -10,7 +10,7 @@ import ru.practicum.ewmmainservice.event.model.Location;
 @Builder
 public class NewEventDto {
     private String annotation;
-    private Long categoryId;
+    private Long category;
     private String description;
     private String eventDate;
     private Location location;

@@ -1,6 +1,7 @@
 package ru.practicum.ewmmainservice.event.service;
 
 import org.springframework.data.domain.PageRequest;
+import org.springframework.stereotype.Service;
 import ru.practicum.ewmmainservice.event.dto.EventFullDto;
 import ru.practicum.ewmmainservice.event.dto.EventShortDto;
 import ru.practicum.ewmmainservice.event.dto.NewEventDto;
@@ -12,6 +13,7 @@ import ru.practicum.ewmmainservice.user.repository.UserRepository;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Service
 public class EventServiceImpl implements EventService {
     private final EventRepository eventRepository;
     private final UserRepository userRepository;
