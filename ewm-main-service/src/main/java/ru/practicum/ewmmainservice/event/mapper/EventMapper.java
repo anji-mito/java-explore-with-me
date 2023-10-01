@@ -10,15 +10,13 @@ import ru.practicum.ewmmainservice.event.model.Event;
 import ru.practicum.ewmmainservice.user.mapper.UserMapper;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.stream.Collectors;
+
+import static ru.practicum.ewmmainservice.utility.DateTimeFormatter.API_DATE_TIME_FORMAT;
 
 @Component
 public class EventMapper {
     private final CategoryMapper categoryMapper;
     private final UserMapper userMapper;
-    public static final DateTimeFormatter DATE_TIME_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     public EventMapper(CategoryMapper categoryMapper, UserMapper userMapper) {
         this.categoryMapper = categoryMapper;
@@ -28,9 +26,9 @@ public class EventMapper {
     public Event toEntity(NewEventDto dto) {
         return Event.builder()
                 .annotation(dto.getAnnotation())
-                .categories(List.of(Category.builder().id(dto.getCategory()).build()))
+                .category(Category.builder().id(dto.getCategory()).build())
                 .description(dto.getDescription())
-                .eventDate(LocalDateTime.parse(dto.getEventDate(), DATE_TIME_FORMAT))
+                .eventDate(LocalDateTime.parse(dto.getEventDate(), API_DATE_TIME_FORMAT))
                 .location(dto.getLocation())
                 .paid(dto.isPaid())
                 .participantLimit(dto.getParticipantLimit())
@@ -41,9 +39,9 @@ public class EventMapper {
     public EventShortDto toShortDto(Event event) {
         return EventShortDto.builder()
                 .annotation(event.getAnnotation())
-                .categories(event.getCategories().stream().map(categoryMapper::toDto).collect(Collectors.toList()))
+                .category(categoryMapper.toDto(event.getCategory()))
                 .confirmedRequests(event.getConfirmedRequests())
-                .eventDate(event.getEventDate().format(DATE_TIME_FORMAT))
+                .eventDate(event.getEventDate().format(API_DATE_TIME_FORMAT))
                 .id(event.getId())
                 .initiator(userMapper.toShortDto(event.getInitiator()))
                 .paid(event.isPaid())
@@ -54,17 +52,17 @@ public class EventMapper {
     public EventFullDto toDto(Event event) {
         return EventFullDto.builder()
                 .annotation(event.getAnnotation())
-                .category(event.getCategories().stream().map(categoryMapper::toDto).collect(Collectors.toList()))
+                .category(categoryMapper.toDto(event.getCategory()))
                 .confirmedRequests(event.getConfirmedRequests())
-                .createdOn(event.getEventDate().format(DATE_TIME_FORMAT))
+                .createdOn(event.getEventDate().format(API_DATE_TIME_FORMAT))
                 .description(event.getDescription())
-                .eventDate(event.getEventDate().format(DATE_TIME_FORMAT))
+                .eventDate(event.getEventDate().format(API_DATE_TIME_FORMAT))
                 .id(event.getId())
                 .initiator(userMapper.toShortDto(event.getInitiator()))
                 .location(event.getLocation())
                 .paid(event.isPaid())
                 .participantLimit(event.getParticipantLimit())
-                .publishedOn(event.getPublishedOn().format(DATE_TIME_FORMAT))
+                .publishedOn(null)
                 .requestModeration(event.isRequestModeration())
                 .state(event.getState())
                 .title(event.getTitle())

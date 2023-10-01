@@ -13,7 +13,7 @@ import java.util.List;
 @Builder
 public class EventShortDto {
     private String annotation;
-    private List<CategoryDto> categories;
+    private CategoryDto category;
     private long confirmedRequests;
     private String eventDate;
     private long id;

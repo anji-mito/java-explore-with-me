@@ -7,7 +7,6 @@ import ru.practicum.ewmmainservice.user.model.User;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @AllArgsConstructor
 @Getter
@@ -23,9 +22,9 @@ public class Event {
     @Column(length = 1000)
     private String annotation;
 
-    @OneToMany(fetch = FetchType.EAGER)
-    @JoinColumn(name = "category_id")
-    private List<Category> categories;
+    @OneToOne
+    @JoinColumn(name = "category_id", referencedColumnName = "id")
+    private Category category;
 
     @Column(name = "confirmed_requests")
     private long confirmedRequests;
@@ -42,7 +41,8 @@ public class Event {
     @JoinColumn(name = "initiator_id", referencedColumnName = "id")
     private User initiator;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "location_id", referencedColumnName = "id")
     private Location location;
     private boolean paid;
     @Column(name = "participant_limit")

@@ -2,6 +2,8 @@ package ru.practicum.ewmmainservice.event.service;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.ewmmainservice.category.repository.CategoryRepository;
 import ru.practicum.ewmmainservice.event.dto.EventFullDto;
 import ru.practicum.ewmmainservice.event.dto.EventShortDto;
 import ru.practicum.ewmmainservice.event.dto.NewEventDto;
@@ -17,18 +19,20 @@ import java.util.stream.Collectors;
 public class EventServiceImpl implements EventService {
     private final EventRepository eventRepository;
     private final UserRepository userRepository;
+    private final CategoryRepository categoryRepository;
     private final EventMapper eventMapper;
 
-    public EventServiceImpl(EventRepository eventRepository, UserRepository userRepository, EventMapper eventMapper) {
+    public EventServiceImpl(EventRepository eventRepository, UserRepository userRepository,
+            CategoryRepository categoryRepository, EventMapper eventMapper) {
         this.eventRepository = eventRepository;
         this.userRepository = userRepository;
+        this.categoryRepository = categoryRepository;
         this.eventMapper = eventMapper;
     }
 
     @Override
     public List<EventShortDto> getEvents(String text, List<Integer> categories, boolean paid, String rangeStart,
             String rangeEnd, boolean onlyAvailable, String sort, int from, int size) {
-
         return null;
     }
 
@@ -46,14 +50,18 @@ public class EventServiceImpl implements EventService {
                 .collect(Collectors.toUnmodifiableList());
     }
 
+    @Transactional
     @Override
     public EventFullDto create(long userId, NewEventDto dto) {
-        if(userRepository.existsById(userId))
-        {
-            var mappedEvent = eventMapper.toEntity(dto);
-            return eventMapper.toDto(eventRepository.save(mappedEvent));
-        }
-        throw new NotFoundException("Пользователь с id " + userId + " не был найден");
+        var initiator = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("Пользователь с id " + userId + " не был найден"));
+        var eventToAdd = eventMapper.toEntity(dto);
+        var category = categoryRepository.findById(dto.getCategory())
+                .orElseThrow(() -> new NotFoundException("Категория с id: " + dto.getCategory() + " не была найдена")
+                );
+        eventToAdd.setInitiator(initiator);
+        eventToAdd.setCategory(category);
+        return eventMapper.toDto(eventRepository.save(eventToAdd));
     }
 
     @Override
