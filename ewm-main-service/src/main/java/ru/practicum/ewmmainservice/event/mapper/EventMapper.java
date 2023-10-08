@@ -6,6 +6,7 @@ import ru.practicum.ewmmainservice.category.model.Category;
 import ru.practicum.ewmmainservice.event.dto.EventFullDto;
 import ru.practicum.ewmmainservice.event.dto.EventShortDto;
 import ru.practicum.ewmmainservice.event.dto.NewEventDto;
+import ru.practicum.ewmmainservice.event.dto.UpdateEventAdminRequest;
 import ru.practicum.ewmmainservice.event.model.Event;
 import ru.practicum.ewmmainservice.user.mapper.UserMapper;
 
@@ -67,6 +68,19 @@ public class EventMapper {
                 .state(event.getState())
                 .title(event.getTitle())
                 .views(event.getViews())
+                .build();
+    }
+    public Event toEntity(UpdateEventAdminRequest dto) {
+        return Event.builder()
+                .annotation(dto.getAnnotation())
+                .category(Category.builder().id(dto.getCategory()).build())
+                .description(dto.getDescription())
+                //.eventDate(LocalDateTime.parse(dto.getEventDate(), API_DATE_TIME_FORMAT))
+                .location(dto.getLocation())
+                //.paid(dto.getPaid())
+                //.participantLimit(dto.getParticipantLimit())
+                //.requestModeration(dto.getRequestModeration())
+                .title(dto.getTitle())
                 .build();
     }
 }
