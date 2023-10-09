@@ -80,9 +80,11 @@ public class EventServiceImpl implements EventService {
         if (event.getAnnotation() != null) {
             foundEvent.setAnnotation(event.getAnnotation());
         }
-        var category = categoryRepository.findById(dto.getCategory())
-                .orElseThrow(() -> new NotFoundException("Категория с id: " + dto.getCategory() + " не была найдена"));
-        foundEvent.setCategory(category);
+        if(dto.getCategory()!=0) {
+            var category = categoryRepository.findById(dto.getCategory())
+                    .orElseThrow(() -> new NotFoundException("Категория с id: " + dto.getCategory() + " не была найдена"));
+            foundEvent.setCategory(category);
+        }
         if (event.getDescription() != null) {
             foundEvent.setDescription(event.getDescription());
         }
