@@ -3,9 +3,7 @@ package ru.practicum.ewmmainservice.event.controller;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.ewmmainservice.event.dto.EventFullDto;
-import ru.practicum.ewmmainservice.event.dto.EventShortDto;
-import ru.practicum.ewmmainservice.event.dto.NewEventDto;
+import ru.practicum.ewmmainservice.event.dto.*;
 import ru.practicum.ewmmainservice.event.service.EventService;
 
 import java.util.List;
@@ -15,10 +13,21 @@ import java.util.List;
 @AllArgsConstructor
 public class PrivateEventController {
     private final EventService eventService;
+
     @PostMapping("/{userId}/events")
     @ResponseStatus(HttpStatus.CREATED)
-    public EventFullDto create(@PathVariable long userId, @RequestBody NewEventDto dto) {
+    public EventFullDto create(
+            @PathVariable long userId,
+            @RequestBody NewEventDto dto) {
         return eventService.create(userId, dto);
+    }
+
+    @PatchMapping("/{userId}/events/{eventId}")
+    public EventFullDto updateEvent(
+            @PathVariable long userId,
+            @PathVariable long eventId,
+            @RequestBody UpdateEventUserRequest dto) {
+        return eventService.updateByInitiator(userId, eventId, dto);
     }
 
     @GetMapping("/events")

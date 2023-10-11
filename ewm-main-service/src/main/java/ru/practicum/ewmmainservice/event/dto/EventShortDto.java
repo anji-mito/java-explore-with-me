@@ -4,8 +4,6 @@ import lombok.*;
 import ru.practicum.ewmmainservice.category.dto.CategoryDto;
 import ru.practicum.ewmmainservice.user.dto.UserShortDto;
 
-import java.util.List;
-
 @AllArgsConstructor
 @Getter
 @Setter

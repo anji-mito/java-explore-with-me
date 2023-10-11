@@ -4,6 +4,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewmmainservice.event.repository.EventRepository;
 import ru.practicum.ewmmainservice.exception.NotFoundException;
+import ru.practicum.ewmmainservice.request.dto.EventRequestStatusUpdateRequest;
+import ru.practicum.ewmmainservice.request.dto.EventRequestStatusUpdateResult;
 import ru.practicum.ewmmainservice.request.dto.ParticipationRequestDto;
 import ru.practicum.ewmmainservice.request.mapper.ParticipationRequestMapper;
 import ru.practicum.ewmmainservice.request.model.ParticipationRequest;
@@ -20,6 +22,7 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
     private final EventRepository eventRepository;
     private final UserRepository userRepository;
     private final ParticipationRequestMapper requestMapper;
+
     public ParticipationRequestServiceImpl(RequestRepository requestRepository, EventRepository eventRepository,
             UserRepository userRepository, ParticipationRequestMapper requestMapper) {
         this.requestRepository = requestRepository;
@@ -50,8 +53,34 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
         return requestMapper.toDto(requestRepository.save(request));
     }
 
+    @Transactional
     @Override
     public ParticipationRequestDto cancelRequest(long userId, long requestId) {
-        return null;
+        var foundRequest = requestRepository.findById(requestId)
+                .orElseThrow(() -> new NotFoundException("Запрос с id: " + requestId + " не был найден"));
+        foundRequest.setStatus(Status.CANCELED);
+        return requestMapper.toDto(foundRequest);
+    }
+
+    @Transactional
+    @Override
+    public EventRequestStatusUpdateResult updateStatus(long userId, long eventId, EventRequestStatusUpdateRequest dto) {
+        var foundRequests = requestRepository.findByIdInAndEventId(dto.getRequestIds(), eventId);
+        EventRequestStatusUpdateResult result = new EventRequestStatusUpdateResult();
+        if (dto.getStatus() == Status.CONFIRMED) {
+            for (ParticipationRequest request: foundRequests)
+            {
+                request.setStatus(dto.getStatus());
+                result.getConfirmedRequests().add(requestMapper.toDto(request));
+            }
+        }
+        if (dto.getStatus() == Status.REJECTED) {
+            for (ParticipationRequest request: foundRequests)
+            {
+                request.setStatus(dto.getStatus());
+                result.getRejectedRequests().add(requestMapper.toDto(request));
+            }
+        }
+        return result;
     }
 }

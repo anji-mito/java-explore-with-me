@@ -3,6 +3,8 @@ package ru.practicum.ewmmainservice.request.controller;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.ewmmainservice.request.dto.EventRequestStatusUpdateRequest;
+import ru.practicum.ewmmainservice.request.dto.EventRequestStatusUpdateResult;
 import ru.practicum.ewmmainservice.request.dto.ParticipationRequestDto;
 import ru.practicum.ewmmainservice.request.service.ParticipationRequestService;
 
@@ -28,5 +30,19 @@ public class PrivateRequestController {
     @PatchMapping("/{userId}/requests/{requestsId}/cancel")
     public ParticipationRequestDto cancelRequest(@PathVariable long userId, @PathVariable long requestsId) {
         return requestService.cancelRequest(userId, requestsId);
+    }
+    @PatchMapping("/{userId}/requests/{requestsId}")
+    public EventRequestStatusUpdateResult updateRequest(
+            @PathVariable long userId,
+            @PathVariable long eventId,
+            @RequestBody EventRequestStatusUpdateRequest dto) {
+        return requestService.updateStatus(userId, eventId, dto);
+    }
+    @PatchMapping("/{userId}/events/{eventId}/requests")
+    public EventRequestStatusUpdateResult updateStatuses(
+            @PathVariable Long userId,
+            @PathVariable Long eventId,
+            @RequestBody EventRequestStatusUpdateRequest dto) {
+        return requestService.updateStatus(userId, eventId, dto);
     }
 }

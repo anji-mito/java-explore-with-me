@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS locations (
 );
 CREATE TABLE IF NOT EXISTS event (
     id                  SERIAL PRIMARY KEY,
-    ANNOTATION          VARCHAR(2000),
+    ANNOTATION          VARCHAR(3000),
     category_id         BIGINT,
     confirm_requests    BIGINT,
     created_on          TIMESTAMP,

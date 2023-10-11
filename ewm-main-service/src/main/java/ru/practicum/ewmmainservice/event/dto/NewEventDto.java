@@ -1,10 +1,7 @@
 package ru.practicum.ewmmainservice.event.dto;
 
 import lombok.*;
-import ru.practicum.ewmmainservice.category.dto.CategoryDto;
 import ru.practicum.ewmmainservice.event.model.Location;
-
-import java.util.List;
 
 @AllArgsConstructor
 @Getter

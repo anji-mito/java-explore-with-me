@@ -3,10 +3,7 @@ package ru.practicum.ewmmainservice.event.mapper;
 import org.springframework.stereotype.Component;
 import ru.practicum.ewmmainservice.category.mapper.CategoryMapper;
 import ru.practicum.ewmmainservice.category.model.Category;
-import ru.practicum.ewmmainservice.event.dto.EventFullDto;
-import ru.practicum.ewmmainservice.event.dto.EventShortDto;
-import ru.practicum.ewmmainservice.event.dto.NewEventDto;
-import ru.practicum.ewmmainservice.event.dto.UpdateEventAdminRequest;
+import ru.practicum.ewmmainservice.event.dto.*;
 import ru.practicum.ewmmainservice.event.model.Event;
 import ru.practicum.ewmmainservice.user.mapper.UserMapper;
 
@@ -27,7 +24,6 @@ public class EventMapper {
     public Event toEntity(NewEventDto dto) {
         return Event.builder()
                 .annotation(dto.getAnnotation())
-                .category(Category.builder().id(dto.getCategory()).build())
                 .description(dto.getDescription())
                 .eventDate(LocalDateTime.parse(dto.getEventDate(), API_DATE_TIME_FORMAT))
                 .location(dto.getLocation())
@@ -72,15 +68,28 @@ public class EventMapper {
     }
     public Event toEntity(UpdateEventAdminRequest dto) {
         return Event.builder()
-                .annotation(dto.getAnnotation())
-                .category(Category.builder().id(dto.getCategory()).build())
-                .description(dto.getDescription())
-                //.eventDate(LocalDateTime.parse(dto.getEventDate(), API_DATE_TIME_FORMAT))
-                .location(dto.getLocation())
-                //.paid(dto.getPaid())
-                //.participantLimit(dto.getParticipantLimit())
-                //.requestModeration(dto.getRequestModeration())
-                .title(dto.getTitle())
+                .annotation(dto.getAnnotation() != null ? dto.getAnnotation() : null)
+                .category(dto.getCategory() != 0 ? Category.builder().id(dto.getCategory()).build() : null)
+                .description(dto.getDescription() != null ? dto.getDescription() : null)
+                .eventDate(dto.getEventDate() != null ? LocalDateTime.parse(dto.getEventDate(), API_DATE_TIME_FORMAT) : null)
+                .location(dto.getLocation() != null ? dto.getLocation() : null)
+                .paid(dto.getPaid() != null ? dto.getPaid() : false)
+                .participantLimit(dto.getParticipantLimit() != null ? dto.getParticipantLimit() : 0)
+                .requestModeration(dto.getRequestModeration() != null ? dto.getRequestModeration() : false)
+                .title(dto.getTitle() != null ? dto.getTitle() : null)
+                .build();
+    }
+    public Event toEntity(UpdateEventUserRequest dto) {
+        return Event.builder()
+                .annotation(dto.getAnnotation() != null ? dto.getAnnotation() : null)
+                .category(dto.getCategory() != 0 ? Category.builder().id(dto.getCategory()).build() : null)
+                .description(dto.getDescription() != null ? dto.getDescription() : null)
+                .eventDate(dto.getEventDate() != null ? LocalDateTime.parse(dto.getEventDate(), API_DATE_TIME_FORMAT) : null)
+                .location(dto.getLocation() != null ? dto.getLocation() : null)
+                .paid(dto.getPaid() != null ? dto.getPaid() : false)
+                .participantLimit(dto.getParticipantLimit() != null ? dto.getParticipantLimit() : 0)
+                .requestModeration(dto.getRequestModeration() != null ? dto.getRequestModeration() : false)
+                .title(dto.getTitle() != null ? dto.getTitle() : null)
                 .build();
     }
 }
