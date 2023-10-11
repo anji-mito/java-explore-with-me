@@ -3,6 +3,7 @@ package ru.practicum.ewmmainservice.request.controller;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.ewmmainservice.event.dto.EventFullDto;
 import ru.practicum.ewmmainservice.request.dto.EventRequestStatusUpdateRequest;
 import ru.practicum.ewmmainservice.request.dto.EventRequestStatusUpdateResult;
 import ru.practicum.ewmmainservice.request.dto.ParticipationRequestDto;
@@ -44,5 +45,11 @@ public class PrivateRequestController {
             @PathVariable Long eventId,
             @RequestBody EventRequestStatusUpdateRequest dto) {
         return requestService.updateStatus(userId, eventId, dto);
+    }
+    @GetMapping("/{userId}/events/{eventId}/requests")
+    public List<ParticipationRequestDto> getRequestsByInitiatorAndEvent(
+            @PathVariable long userId,
+            @PathVariable long eventId) {
+        return requestService.getByUserAndEvent(userId, eventId);
     }
 }

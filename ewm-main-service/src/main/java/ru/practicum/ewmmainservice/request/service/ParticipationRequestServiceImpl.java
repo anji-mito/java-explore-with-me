@@ -15,6 +15,7 @@ import ru.practicum.ewmmainservice.user.repository.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ParticipationRequestServiceImpl implements ParticipationRequestService {
@@ -82,5 +83,13 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
             }
         }
         return result;
+    }
+
+    @Override
+    public List<ParticipationRequestDto> getByUserAndEvent(long userId, long eventId) {
+        return requestRepository.findByInitiatorIdAndEventId(userId, eventId)
+                .stream()
+                .map(requestMapper::toDto)
+                .collect(Collectors.toUnmodifiableList());
     }
 }

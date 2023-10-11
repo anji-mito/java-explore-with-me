@@ -30,18 +30,19 @@ public class PrivateEventController {
         return eventService.updateByInitiator(userId, eventId, dto);
     }
 
-    @GetMapping("/events")
+    @GetMapping("/{userId}/events")
     public List<EventShortDto> getAllByUser(
             @PathVariable long userId,
-            @RequestParam(required = false, defaultValue = "0") int from,
-            @RequestParam(required = false, defaultValue = "10") int size) {
-        return eventService.getEventsByUser(userId, from / size, size);
+            @RequestParam(required = false, defaultValue = "0") Integer from,
+            @RequestParam(required = false, defaultValue = "10") Integer size) {
+        return eventService.getEventsByUser(userId, from, size);
     }
 
-    @GetMapping("/{eventId}/events")
+    @GetMapping("/{userId}/events/{eventId}")
     public EventFullDto getFullEventById(
             @PathVariable long userId,
             @PathVariable long eventId) {
         return eventService.getFullEventById(eventId, userId);
     }
+
 }
