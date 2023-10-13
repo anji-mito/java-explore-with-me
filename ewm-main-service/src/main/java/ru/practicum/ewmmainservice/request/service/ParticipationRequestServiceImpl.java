@@ -92,4 +92,12 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
                 .map(requestMapper::toDto)
                 .collect(Collectors.toUnmodifiableList());
     }
+
+    @Override
+    public List<ParticipationRequestDto> getByUser(long userId) {
+        return requestRepository.findByRequesterId(userId)
+                .stream()
+                .map(requestMapper::toDto)
+                .collect(Collectors.toUnmodifiableList());
+    }
 }

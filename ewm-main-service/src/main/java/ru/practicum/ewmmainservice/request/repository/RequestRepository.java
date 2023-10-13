@@ -6,6 +6,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import ru.practicum.ewmmainservice.request.model.ParticipationRequest;
 
+import java.util.Collection;
 import java.util.List;
 
 @Repository
@@ -18,4 +19,5 @@ public interface RequestRepository extends JpaRepository<ParticipationRequest, L
             "AND i.id = :initiatorId")
     List<ParticipationRequest> findByInitiatorIdAndEventId(@Param("initiatorId") long initiatorId, @Param("eventId") long eventId);
 
+    List<ParticipationRequest> findByRequesterId(long userId);
 }

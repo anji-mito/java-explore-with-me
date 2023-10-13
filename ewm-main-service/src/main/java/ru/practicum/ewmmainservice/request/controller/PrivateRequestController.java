@@ -3,7 +3,6 @@ package ru.practicum.ewmmainservice.request.controller;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.ewmmainservice.event.dto.EventFullDto;
 import ru.practicum.ewmmainservice.request.dto.EventRequestStatusUpdateRequest;
 import ru.practicum.ewmmainservice.request.dto.EventRequestStatusUpdateResult;
 import ru.practicum.ewmmainservice.request.dto.ParticipationRequestDto;
