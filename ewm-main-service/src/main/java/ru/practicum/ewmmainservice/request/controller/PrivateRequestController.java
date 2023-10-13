@@ -11,7 +11,7 @@ import ru.practicum.ewmmainservice.request.service.ParticipationRequestService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/users/")
+@RequestMapping("/users")
 @AllArgsConstructor
 public class PrivateRequestController {
     private final ParticipationRequestService requestService;
@@ -24,7 +24,7 @@ public class PrivateRequestController {
     @GetMapping("/{userId}/requests")
     public List<ParticipationRequestDto> getAllByUser(
             @PathVariable long userId) {
-        return requestService.getRequestsByUser(userId);
+        return requestService.getByUser(userId);
     }
 
     @PatchMapping("/{userId}/requests/{requestsId}/cancel")
@@ -34,9 +34,9 @@ public class PrivateRequestController {
     @PatchMapping("/{userId}/requests/{requestsId}")
     public EventRequestStatusUpdateResult updateRequest(
             @PathVariable long userId,
-            @PathVariable long eventId,
+            @PathVariable long requestsId,
             @RequestBody EventRequestStatusUpdateRequest dto) {
-        return requestService.updateStatus(userId, eventId, dto);
+        return requestService.updateStatus(userId, requestsId, dto);
     }
     @PatchMapping("/{userId}/events/{eventId}/requests")
     public EventRequestStatusUpdateResult updateStatuses(
