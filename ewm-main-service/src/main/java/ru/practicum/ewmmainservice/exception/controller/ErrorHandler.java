@@ -1,6 +1,7 @@
 package ru.practicum.ewmmainservice.exception.controller;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -39,7 +40,7 @@ public class ErrorHandler {
                 .errors(Arrays.stream(e.getStackTrace())
                         .map(StackTraceElement::toString)
                         .collect(Collectors.toUnmodifiableList()))
-                .status(HttpStatus.NOT_FOUND)
+                .status(HttpStatus.BAD_REQUEST)
                 .reason(e.getReason())
                 .timestamp(LocalDateTime.now().format(API_DATE_TIME_FORMAT))
                 .build();
@@ -53,8 +54,21 @@ public class ErrorHandler {
                 .errors(Arrays.stream(e.getStackTrace())
                         .map(StackTraceElement::toString)
                         .collect(Collectors.toUnmodifiableList()))
-                .status(HttpStatus.NOT_FOUND)
+                .status(HttpStatus.CONFLICT)
                 .reason(e.getReason())
+                .timestamp(LocalDateTime.now().format(API_DATE_TIME_FORMAT))
+                .build();
+    }
+    @ExceptionHandler(org.h2.jdbc.JdbcSQLIntegrityConstraintViolationException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ApiError handleIntegrityConstraintViolation(Exception e) {
+        return ApiError.builder()
+                .message(e.getMessage())
+                .errors(Arrays.stream(e.getStackTrace())
+                        .map(StackTraceElement::toString)
+                        .collect(Collectors.toUnmodifiableList()))
+                .status(HttpStatus.CONFLICT)
+                .reason(e.getCause().toString())
                 .timestamp(LocalDateTime.now().format(API_DATE_TIME_FORMAT))
                 .build();
     }

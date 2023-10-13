@@ -1,6 +1,7 @@
 package ru.practicum.ewmmainservice.event.model;
 
 import lombok.*;
+import org.hibernate.annotations.Cascade;
 import ru.practicum.ewmmainservice.category.model.Category;
 import ru.practicum.ewmmainservice.event.dto.State;
 import ru.practicum.ewmmainservice.user.model.User;
@@ -23,7 +24,7 @@ public class Event {
     private String annotation;
 
     @OneToOne
-    @JoinColumn(name = "category_id", referencedColumnName = "id")
+    @JoinColumn(name = "category_id", referencedColumnName = "id", nullable = false)
     private Category category;
 
     @Column(name = "confirmed_requests")
