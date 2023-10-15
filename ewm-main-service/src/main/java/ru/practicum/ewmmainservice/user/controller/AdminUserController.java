@@ -3,14 +3,17 @@ package ru.practicum.ewmmainservice.user.controller;
 import com.sun.istack.NotNull;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewmmainservice.user.dto.NewUserRequest;
 import ru.practicum.ewmmainservice.user.dto.UserDto;
 import ru.practicum.ewmmainservice.user.service.UserService;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
+@Validated
 @RequestMapping("/admin/users")
 @AllArgsConstructor
 public class AdminUserController {
@@ -18,7 +21,7 @@ public class AdminUserController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public UserDto create(@RequestBody NewUserRequest newUserRequest) {
+    public UserDto create(@RequestBody @Valid NewUserRequest newUserRequest) {
         return userService.create(newUserRequest);
     }
 

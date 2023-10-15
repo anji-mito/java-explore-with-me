@@ -12,7 +12,6 @@ import ru.practicum.ewmmainservice.event.service.EventService;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static ru.practicum.ewmmainservice.utility.DateTimeFormatter.API_DATE_TIME_FORMAT;
 import static ru.practicum.ewmmainservice.utility.DateTimeFormatter.apiDateTimePattern;
 
 @RestController

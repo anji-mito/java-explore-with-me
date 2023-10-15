@@ -120,6 +120,13 @@ public class EventServiceImpl implements EventService {
         var foundEvent = eventRepository.findById(eventId)
                 .orElseThrow(() -> new NotFoundException("Событие с id: " + eventId + " не был найден"));
         var event = eventMapper.toEntity(dto);
+        if (dto.getStateAction() == StateAction.PUBLISH_EVENT && foundEvent.getState() == State.PENDING) {
+            foundEvent.setState(State.PUBLISHED);
+            foundEvent.setPublishedOn(LocalDateTime.now());
+        }
+        if (dto.getStateAction() == StateAction.CANCEL_REVIEW && foundEvent.getState() != State.PUBLISHED) {
+            throw new ConflictException("событие можно отклонить, только если оно еще не опубликовано");
+        }
         if (event.getAnnotation() != null) {
             foundEvent.setAnnotation(event.getAnnotation());
         }
