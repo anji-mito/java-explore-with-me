@@ -2,41 +2,38 @@ package ru.practicum.ewmmainservice.request.controller;
 
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewmmainservice.request.dto.EventRequestStatusUpdateRequest;
 import ru.practicum.ewmmainservice.request.dto.EventRequestStatusUpdateResult;
 import ru.practicum.ewmmainservice.request.dto.ParticipationRequestDto;
 import ru.practicum.ewmmainservice.request.service.ParticipationRequestService;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @RestController
+@Validated
 @RequestMapping("/users")
 @AllArgsConstructor
 public class PrivateRequestController {
     private final ParticipationRequestService requestService;
     @PostMapping("/{userId}/requests")
     @ResponseStatus(HttpStatus.CREATED)
-    public ParticipationRequestDto create(@PathVariable long userId, @RequestParam long eventId) {
+    public ParticipationRequestDto create(@PathVariable Long userId, @RequestParam Long eventId) {
         return requestService.createRequest(userId, eventId);
     }
 
     @GetMapping("/{userId}/requests")
     public List<ParticipationRequestDto> getAllByUser(
-            @PathVariable long userId) {
+            @PathVariable Long userId) {
         return requestService.getByUser(userId);
     }
 
     @PatchMapping("/{userId}/requests/{requestsId}/cancel")
-    public ParticipationRequestDto cancelRequest(@PathVariable long userId, @PathVariable long requestsId) {
+    public ParticipationRequestDto cancelRequest(@PathVariable Long userId, @PathVariable Long requestsId) {
         return requestService.cancelRequest(userId, requestsId);
-    }
-    @PatchMapping("/{userId}/requests/{requestsId}")
-    public EventRequestStatusUpdateResult updateRequest(
-            @PathVariable long userId,
-            @PathVariable long requestsId,
-            @RequestBody EventRequestStatusUpdateRequest dto) {
-        return requestService.updateStatus(userId, requestsId, dto);
     }
     @PatchMapping("/{userId}/events/{eventId}/requests")
     public EventRequestStatusUpdateResult updateStatuses(
@@ -47,8 +44,8 @@ public class PrivateRequestController {
     }
     @GetMapping("/{userId}/events/{eventId}/requests")
     public List<ParticipationRequestDto> getRequestsByInitiatorAndEvent(
-            @PathVariable long userId,
-            @PathVariable long eventId) {
+            @Valid @PathVariable @NotNull Long userId,
+            @Valid @PathVariable @NotNull Long eventId) {
         return requestService.getByUserAndEvent(userId, eventId);
     }
 }

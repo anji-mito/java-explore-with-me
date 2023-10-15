@@ -3,6 +3,7 @@ package ru.practicum.ewmmainservice.request.service;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewmmainservice.event.repository.EventRepository;
+import ru.practicum.ewmmainservice.exception.ConflictException;
 import ru.practicum.ewmmainservice.exception.NotFoundException;
 import ru.practicum.ewmmainservice.request.dto.EventRequestStatusUpdateRequest;
 import ru.practicum.ewmmainservice.request.dto.EventRequestStatusUpdateResult;
@@ -51,6 +52,9 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
                 .status(Status.PENDING)
                 .event(event)
                 .build();
+        if (event.getParticipantLimit() == 0) {
+            request.setStatus(Status.CONFIRMED);
+        }
         return requestMapper.toDto(requestRepository.save(request));
     }
 
@@ -66,18 +70,29 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
     @Transactional
     @Override
     public EventRequestStatusUpdateResult updateStatus(long userId, long eventId, EventRequestStatusUpdateRequest dto) {
+        var foundEvent = eventRepository.findById(eventId)
+                .orElseThrow(() -> new NotFoundException("Событие с id: " + eventId + " не было найдено"));
         var foundRequests = requestRepository.findByIdInAndEventId(dto.getRequestIds(), eventId);
         EventRequestStatusUpdateResult result = new EventRequestStatusUpdateResult();
+        if (foundEvent.getParticipantLimit() == 0 || !foundEvent.isRequestModeration()) {
+            return result;
+        }
         if (dto.getStatus() == Status.CONFIRMED) {
-            for (ParticipationRequest request: foundRequests)
-            {
+            for (ParticipationRequest request : foundRequests) {
+                if (foundEvent.getConfirmedRequests() == foundEvent.getParticipantLimit()) {
+                    request.setStatus(Status.REJECTED);
+                    result.getRejectedRequests().add(requestMapper.toDto(request));
+                }
+                if (request.getStatus() != Status.PENDING) {
+                    throw new ConflictException("Заявка уже была подтверждена или отменена");
+                }
                 request.setStatus(dto.getStatus());
+                foundEvent.setConfirmedRequests(foundEvent.getConfirmedRequests()+1);
                 result.getConfirmedRequests().add(requestMapper.toDto(request));
             }
         }
         if (dto.getStatus() == Status.REJECTED) {
-            for (ParticipationRequest request: foundRequests)
-            {
+            for (ParticipationRequest request : foundRequests) {
                 request.setStatus(dto.getStatus());
                 result.getRejectedRequests().add(requestMapper.toDto(request));
             }

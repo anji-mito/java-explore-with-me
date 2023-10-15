@@ -2,6 +2,7 @@ package ru.practicum.ewmmainservice.exception.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -71,5 +72,20 @@ public class ErrorHandler {
                 .reason(e.getCause().toString())
                 .timestamp(LocalDateTime.now().format(API_DATE_TIME_FORMAT))
                 .build();
+    }
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiError handleValidationExceptions(MethodArgumentNotValidException e) {
+        ApiError.ApiErrorBuilder errorBuilder = ApiError.builder()
+                .message(e.getMessage())
+                .errors(Arrays.stream(e.getStackTrace())
+                        .map(StackTraceElement::toString)
+                        .collect(Collectors.toUnmodifiableList()))
+                .status(HttpStatus.BAD_REQUEST)
+                .timestamp(LocalDateTime.now().format(API_DATE_TIME_FORMAT));
+        if (e.getCause() != null) {
+            errorBuilder.reason(e.getCause().toString());
+        }
+        return errorBuilder.build();
     }
 }

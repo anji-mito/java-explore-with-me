@@ -1,5 +1,6 @@
 package ru.practicum.ewmmainservice.event.service;
 
+import lombok.AllArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -7,6 +8,7 @@ import ru.practicum.ewmmainservice.category.repository.CategoryRepository;
 import ru.practicum.ewmmainservice.event.dto.*;
 import ru.practicum.ewmmainservice.event.mapper.EventMapper;
 import ru.practicum.ewmmainservice.event.repository.EventRepository;
+import ru.practicum.ewmmainservice.exception.ConflictException;
 import ru.practicum.ewmmainservice.exception.NotFoundException;
 import ru.practicum.ewmmainservice.user.repository.UserRepository;
 
@@ -15,19 +17,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
 public class EventServiceImpl implements EventService {
     private final EventRepository eventRepository;
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
     private final EventMapper eventMapper;
-
-    public EventServiceImpl(EventRepository eventRepository, UserRepository userRepository,
-            CategoryRepository categoryRepository, EventMapper eventMapper) {
-        this.eventRepository = eventRepository;
-        this.userRepository = userRepository;
-        this.categoryRepository = categoryRepository;
-        this.eventMapper = eventMapper;
-    }
 
     @Override
     public List<EventShortDto> getEvents(String text, List<Integer> categories, boolean paid, String rangeStart,
@@ -45,15 +40,18 @@ public class EventServiceImpl implements EventService {
     public EventFullDto updateByInitiator(long userId, long eventId, UpdateEventUserRequest dto) {
         var foundEvent = eventRepository.findById(eventId)
                 .orElseThrow(() -> new NotFoundException("Событие с id: " + eventId + " не был найден"));
+        if (foundEvent.getInitiator().getId() != userId) {
+            throw new ConflictException("Событие с id: " + eventId + " не пренадлежит пользователю с id: " + userId);
+        }
+        if (foundEvent.getState().equals(State.PUBLISHED)) {
+            throw new ConflictException("Нельзя редактировать уже подтвержденное событие");
+        }
         var event = eventMapper.toEntity(dto);
         if (event.getAnnotation() != null) {
             foundEvent.setAnnotation(event.getAnnotation());
         }
-        if(dto.getCategory()!=0) {
-            var category = categoryRepository.findById(dto.getCategory())
-                    .orElseThrow(() -> new NotFoundException("Категория с id: " + dto.getCategory() + " не была найдена"));
-            foundEvent.setCategory(category);
-        }
+        var category = categoryRepository.findById(dto.getCategory());
+        category.ifPresent(foundEvent::setCategory);
         if (event.getDescription() != null) {
             foundEvent.setDescription(event.getDescription());
         }
@@ -72,16 +70,16 @@ public class EventServiceImpl implements EventService {
         if (dto.getRequestModeration() != null) {
             foundEvent.setRequestModeration(dto.getRequestModeration());
         }
-        if (dto.getStateAction()!=null) {
+        if (dto.getStateAction() != null) {
             foundEvent.setState(event.getState());
         }
-        if(event.getTitle() != null) {
+        if (event.getTitle() != null) {
             foundEvent.setTitle(event.getTitle());
         }
-        if(dto.getStateAction() == StateAction.CANCEL_REVIEW) {
+        if (dto.getStateAction() == StateAction.CANCEL_REVIEW) {
             foundEvent.setState(State.CANCELED);
         }
-        if(dto.getStateAction() == StateAction.SEND_TO_REVIEW) {
+        if (dto.getStateAction() == StateAction.SEND_TO_REVIEW) {
             foundEvent.setState(State.PENDING);
         }
         return eventMapper.toDto(foundEvent);
@@ -102,8 +100,7 @@ public class EventServiceImpl implements EventService {
                 .orElseThrow(() -> new NotFoundException("Пользователь с id " + userId + " не был найден"));
         var eventToAdd = eventMapper.toEntity(dto);
         var category = categoryRepository.findById(dto.getCategory())
-                .orElseThrow(() -> new NotFoundException("Категория с id: " + dto.getCategory() + " не была найдена")
-                );
+                .orElseThrow(() -> new NotFoundException("Категория с id: " + dto.getCategory() + " не была найдена"));
         eventToAdd.setCreatedOn(LocalDateTime.now());
         eventToAdd.setState(State.PENDING);
         eventToAdd.setInitiator(initiator);
@@ -126,9 +123,10 @@ public class EventServiceImpl implements EventService {
         if (event.getAnnotation() != null) {
             foundEvent.setAnnotation(event.getAnnotation());
         }
-        if(dto.getCategory()!=0) {
+        if (dto.getCategory() != 0) {
             var category = categoryRepository.findById(dto.getCategory())
-                    .orElseThrow(() -> new NotFoundException("Категория с id: " + dto.getCategory() + " не была найдена"));
+                    .orElseThrow(
+                            () -> new NotFoundException("Категория с id: " + dto.getCategory() + " не была найдена"));
             foundEvent.setCategory(category);
         }
         if (event.getDescription() != null) {
@@ -149,16 +147,16 @@ public class EventServiceImpl implements EventService {
         if (dto.getRequestModeration() != null) {
             foundEvent.setRequestModeration(dto.getRequestModeration());
         }
-        if (dto.getStateAction()!=null) {
+        if (dto.getStateAction() != null) {
             foundEvent.setState(event.getState());
         }
-        if(event.getTitle() != null) {
+        if (event.getTitle() != null) {
             foundEvent.setTitle(event.getTitle());
         }
-        if(dto.getStateAction() == StateAction.CANCEL_REVIEW) {
+        if (dto.getStateAction() == StateAction.CANCEL_REVIEW) {
             foundEvent.setState(State.CANCELED);
         }
-        if(dto.getStateAction() == StateAction.SEND_TO_REVIEW) {
+        if (dto.getStateAction() == StateAction.SEND_TO_REVIEW) {
             foundEvent.setState(State.PENDING);
         }
         return eventMapper.toDto(foundEvent);
@@ -168,5 +166,15 @@ public class EventServiceImpl implements EventService {
     public List<EventFullDto> getEvents(List<Integer> users, List<String> states, List<Integer> categories,
             String rangeStart, String rangeEnd, int from, int size) {
         return null;
+    }
+
+    @Override
+    public List<EventFullDto> search(List<Long> users, List<State> states, List<Long> categories,
+            LocalDateTime rangeStart, LocalDateTime rangeEnd, int from, int size) {
+        return eventRepository.FilterBy(users, states, categories, rangeStart, rangeEnd, PageRequest.of(from, size))
+                .getContent()
+                .stream()
+                .map(eventMapper::toDto)
+                .collect(Collectors.toUnmodifiableList());
     }
 }

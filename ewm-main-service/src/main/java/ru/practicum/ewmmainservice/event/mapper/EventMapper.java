@@ -25,7 +25,8 @@ public class EventMapper {
         return Event.builder()
                 .annotation(dto.getAnnotation())
                 .description(dto.getDescription())
-                .eventDate(LocalDateTime.parse(dto.getEventDate(), API_DATE_TIME_FORMAT))
+                .eventDate(dto.getEventDate() != null ? LocalDateTime.parse(dto.getEventDate(), API_DATE_TIME_FORMAT)
+                        : null)
                 .location(dto.getLocation())
                 .paid(dto.isPaid())
                 .participantLimit(dto.getParticipantLimit())
@@ -33,6 +34,7 @@ public class EventMapper {
                 .title(dto.getTitle())
                 .build();
     }
+
     public EventShortDto toShortDto(Event event) {
         return EventShortDto.builder()
                 .annotation(event.getAnnotation())
@@ -46,6 +48,7 @@ public class EventMapper {
                 .views(event.getViews())
                 .build();
     }
+
     public EventFullDto toDto(Event event) {
         return EventFullDto.builder()
                 .annotation(event.getAnnotation())
@@ -66,12 +69,14 @@ public class EventMapper {
                 .views(event.getViews())
                 .build();
     }
+
     public Event toEntity(UpdateEventAdminRequest dto) {
         return Event.builder()
                 .annotation(dto.getAnnotation() != null ? dto.getAnnotation() : null)
                 .category(dto.getCategory() != 0 ? Category.builder().id(dto.getCategory()).build() : null)
                 .description(dto.getDescription() != null ? dto.getDescription() : null)
-                .eventDate(dto.getEventDate() != null ? LocalDateTime.parse(dto.getEventDate(), API_DATE_TIME_FORMAT) : null)
+                .eventDate(dto.getEventDate() != null ? LocalDateTime.parse(dto.getEventDate(), API_DATE_TIME_FORMAT)
+                        : null)
                 .location(dto.getLocation() != null ? dto.getLocation() : null)
                 .paid(dto.getPaid() != null ? dto.getPaid() : false)
                 .participantLimit(dto.getParticipantLimit() != null ? dto.getParticipantLimit() : 0)
@@ -79,12 +84,14 @@ public class EventMapper {
                 .title(dto.getTitle() != null ? dto.getTitle() : null)
                 .build();
     }
+
     public Event toEntity(UpdateEventUserRequest dto) {
         return Event.builder()
                 .annotation(dto.getAnnotation() != null ? dto.getAnnotation() : null)
                 .category(dto.getCategory() != 0 ? Category.builder().id(dto.getCategory()).build() : null)
                 .description(dto.getDescription() != null ? dto.getDescription() : null)
-                .eventDate(dto.getEventDate() != null ? LocalDateTime.parse(dto.getEventDate(), API_DATE_TIME_FORMAT) : null)
+                .eventDate(dto.getEventDate() != null ? LocalDateTime.parse(dto.getEventDate(), API_DATE_TIME_FORMAT)
+                        : null)
                 .location(dto.getLocation() != null ? dto.getLocation() : null)
                 .paid(dto.getPaid() != null ? dto.getPaid() : false)
                 .participantLimit(dto.getParticipantLimit() != null ? dto.getParticipantLimit() : 0)
