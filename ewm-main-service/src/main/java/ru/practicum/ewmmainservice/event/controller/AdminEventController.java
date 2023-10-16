@@ -8,10 +8,12 @@ import ru.practicum.ewmmainservice.event.dto.EventFullDto;
 import ru.practicum.ewmmainservice.event.dto.State;
 import ru.practicum.ewmmainservice.event.dto.UpdateEventAdminRequest;
 import ru.practicum.ewmmainservice.event.service.EventService;
+import ru.practicum.ewmmainservice.exception.BadRequestException;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static ru.practicum.ewmmainservice.utility.DateTimeFormatter.API_DATE_TIME_FORMAT;
 import static ru.practicum.ewmmainservice.utility.DateTimeFormatter.apiDateTimePattern;
 
 @RestController
@@ -19,12 +21,21 @@ import static ru.practicum.ewmmainservice.utility.DateTimeFormatter.apiDateTimeP
 @AllArgsConstructor
 public class AdminEventController {
     private final EventService eventService;
+
     @PatchMapping("/{eventId}")
     public EventFullDto updateEvent(
             @PathVariable long eventId,
             @RequestBody UpdateEventAdminRequest event) {
+        if (event.getEventDate() != null) {
+            var eventDate = LocalDateTime.parse(event.getEventDate(), API_DATE_TIME_FORMAT);
+            if (eventDate.isBefore(LocalDateTime.now().plusHours(2))) {
+                throw new BadRequestException(
+                        "дата и время на которые намечено событие не может быть раньше, чем через два часа от текущего момента");
+            }
+        }
         return eventService.update(eventId, event);
     }
+
     @GetMapping
     public List<EventFullDto> search(
             @RequestParam(required = false) List<Long> users,

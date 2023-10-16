@@ -10,10 +10,6 @@ import ru.practicum.ewmmainservice.event.dto.EventShortDto;
 import ru.practicum.ewmmainservice.event.dto.SortEventsBy;
 import ru.practicum.ewmmainservice.event.service.EventService;
 import ru.practicum.ewmmainservice.exception.BadRequestException;
-
-import javax.validation.Valid;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.List;
 
