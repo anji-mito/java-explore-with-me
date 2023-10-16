@@ -33,7 +33,7 @@ public class AdminUserController {
 
     @GetMapping
     public List<UserDto> getAll(
-            @RequestParam(required = false, defaultValue = "0") @NotNull List<Long> ids,
+            @RequestParam(required = false) @NotNull List<Long> ids,
             @RequestParam(required = false, defaultValue = "0") @NotNull Integer from,
             @RequestParam(required = false, defaultValue = "10") @NotNull Integer size) {
         return userService.getAll(ids, from / size, size);

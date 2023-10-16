@@ -49,7 +49,9 @@ public class PrivateEventController {
             @Valid @Min(1) @PathVariable long userId,
             @Valid @Min(1) @PathVariable long eventId,
             @Valid @RequestBody UpdateEventUserRequest dto) {
-        validateEventDate(dto.getEventDate());
+        if (dto.getEventDate()!=null) {
+            validateEventDate(dto.getEventDate());
+        }
         return eventService.updateByInitiator(userId, eventId, dto);
     }
 

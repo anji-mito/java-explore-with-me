@@ -27,13 +27,13 @@ public class AdminEventController {
     }
     @GetMapping
     public List<EventFullDto> search(
-            @RequestParam List<Long> users,
-            @RequestParam List<State> states,
-            @RequestParam List<Long> categories,
-            @RequestParam @DateTimeFormat(pattern = apiDateTimePattern) LocalDateTime rangeStart,
-            @RequestParam @DateTimeFormat(pattern = apiDateTimePattern) LocalDateTime rangeEnd,
-            @RequestParam @DefaultValue int from,
-            @RequestParam int size) {
+            @RequestParam(required = false) List<Long> users,
+            @RequestParam(required = false) List<State> states,
+            @RequestParam(required = false) List<Long> categories,
+            @RequestParam(required = false) @DateTimeFormat(pattern = apiDateTimePattern) LocalDateTime rangeStart,
+            @RequestParam(required = false) @DateTimeFormat(pattern = apiDateTimePattern) LocalDateTime rangeEnd,
+            @RequestParam(required = false, defaultValue = "0") @DefaultValue int from,
+            @RequestParam(required = false, defaultValue = "10") int size) {
         return eventService.search(users, states, categories, rangeStart, rangeEnd, from, size);
     }
 }

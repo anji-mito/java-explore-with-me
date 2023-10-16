@@ -42,9 +42,17 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserDto> getAll(List<Long> ids, Integer from, Integer size) {
-        return userRepository.findAllByIdIn(ids, PageRequest.of(from, size))
-                .stream()
-                .map(userMapper::toDto)
-                .collect(Collectors.toUnmodifiableList());
+        if (ids == null) {
+            return userRepository.findAll(PageRequest.of(from, size))
+                    .stream()
+                    .map(userMapper::toDto)
+                    .collect(Collectors.toUnmodifiableList());
+        } else {
+            return userRepository.findAllByIdIn(ids, PageRequest.of(from, size))
+                    .stream()
+                    .map(userMapper::toDto)
+                    .collect(Collectors.toUnmodifiableList());
+        }
+
     }
 }

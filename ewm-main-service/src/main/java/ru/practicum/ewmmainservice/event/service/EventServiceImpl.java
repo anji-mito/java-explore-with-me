@@ -25,14 +25,19 @@ public class EventServiceImpl implements EventService {
     private final EventMapper eventMapper;
 
     @Override
-    public List<EventShortDto> getEvents(String text, List<Integer> categories, boolean paid, String rangeStart,
-            String rangeEnd, boolean onlyAvailable, String sort, int from, int size) {
-        return null;
+    public List<EventShortDto> getEvents(String text, List<Long> categories, boolean paid, LocalDateTime rangeStart,
+            LocalDateTime rangeEnd, boolean onlyAvailable, SortEventsBy sort, int from, int size) {
+        return eventRepository.FilterBy(text, categories, paid, rangeStart, rangeEnd, State.PUBLISHED,
+                        PageRequest.of(from, size))
+                .getContent()
+                .stream()
+                .map(eventMapper::toShortDto)
+                .collect(Collectors.toUnmodifiableList());
     }
 
     @Override
     public EventFullDto getById(long id) {
-        return eventMapper.toDto(eventRepository.findById(id)
+        return eventMapper.toDto(eventRepository.findByIdAndState(id, State.PUBLISHED)
                 .orElseThrow(() -> new NotFoundException("Событие с id " + id + " не был найден")));
     }
 
@@ -153,9 +158,6 @@ public class EventServiceImpl implements EventService {
         }
         if (dto.getRequestModeration() != null) {
             foundEvent.setRequestModeration(dto.getRequestModeration());
-        }
-        if (dto.getStateAction() != null) {
-            foundEvent.setState(event.getState());
         }
         if (event.getTitle() != null) {
             foundEvent.setTitle(event.getTitle());
