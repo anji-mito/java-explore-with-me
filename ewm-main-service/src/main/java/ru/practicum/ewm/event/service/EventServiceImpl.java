@@ -35,7 +35,7 @@ public class EventServiceImpl implements EventService {
     @Override
     public List<EventShortDto> getEvents(String text, List<Long> categories, Boolean paid, LocalDateTime rangeStart,
             LocalDateTime rangeEnd, boolean onlyAvailable, SortEventsBy sort, int from, int size) {
-        return eventRepository.FilterBy(text, categories, paid, rangeStart, rangeEnd, State.PUBLISHED,
+        return eventRepository.filterBy(text, categories, paid, rangeStart, rangeEnd, State.PUBLISHED,
                         PageRequest.of(from, size))
                 .getContent()
                 .stream()
@@ -117,7 +117,7 @@ public class EventServiceImpl implements EventService {
     @Override
     public List<EventFullDto> search(List<Long> users, List<State> states, List<Long> categories,
             LocalDateTime rangeStart, LocalDateTime rangeEnd, int from, int size) {
-        return eventRepository.FilterBy(users, states, categories, rangeStart, rangeEnd, PageRequest.of(from, size))
+        return eventRepository.filterBy(users, states, categories, rangeStart, rangeEnd, PageRequest.of(from, size))
                 .getContent()
                 .stream()
                 .map(eventMapper::toDto)

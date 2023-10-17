@@ -40,8 +40,8 @@ public class CategoryServiceImpl implements CategoryService {
     @Transactional
     public CategoryDto update(Long id, CategoryDto dto) {
         var categoryToUpdateOptional = categoryRepository.findById(id);
-        var categoryToUpdate = categoryToUpdateOptional.
-                orElseThrow(() -> new NotFoundException("Категория с id " + id + " не была найдена"));
+        var categoryToUpdate = categoryToUpdateOptional
+                .orElseThrow(() -> new NotFoundException("Категория с id " + id + " не была найдена"));
         var name = dto.getName();
         if (name != null && name.length() > 0 && !Objects.equals(name, categoryToUpdate.getName())) {
             categoryToUpdate.setName(name);

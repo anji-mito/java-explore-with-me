@@ -19,6 +19,7 @@ import static ru.practicum.ewm.utility.DateTimeFormatter.API_DATE_TIME_PATTERN;
 @AllArgsConstructor
 public class PublicEventController {
     private final EventService eventService;
+
     @GetMapping
     public List<EventShortDto> getEventsFilterBy(
             @RequestParam(required = false) String text,

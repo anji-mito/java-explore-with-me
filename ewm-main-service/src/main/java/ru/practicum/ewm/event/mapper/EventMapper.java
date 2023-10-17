@@ -7,8 +7,6 @@ import ru.practicum.ewm.event.dto.*;
 import ru.practicum.ewm.event.model.Event;
 import ru.practicum.ewm.user.mapper.UserMapper;
 
-import java.time.LocalDateTime;
-
 import static ru.practicum.ewm.utility.DateTimeFormatter.API_DATE_TIME_FORMAT;
 
 @Component

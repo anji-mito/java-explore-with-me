@@ -25,7 +25,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             + "AND (:categories is null or e.category.id in (:categories)) "
             + "AND (:rangeStart is null or e.eventDate >= :rangeStart) "
             + "AND (:rangeEnd is null or e.eventDate <= :rangeEnd)")
-    Page<Event> FilterBy(
+    Page<Event> filterBy(
             @Param("users") List<Long> users,
             @Param("states") List<State> states,
             @Param("categories") List<Long> categories,
@@ -39,7 +39,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             + "AND (:rangeStart IS NULL OR e.eventDate >= :rangeStart) "
             + "AND (:rangeEnd IS NULL OR e.eventDate <= :rangeEnd) "
             + "AND (e.state = :state)")
-    Page<Event> FilterBy(@Param("text") String text,
+    Page<Event> filterBy(@Param("text") String text,
             @Param("categories") List<Long> categories,
             @Param("paid") Boolean paid,
             @Param("rangeStart") LocalDateTime rangeStart,
