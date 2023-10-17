@@ -6,10 +6,6 @@ import ru.practicum.ewm.ViewStatsDto;
 import ru.practicum.stats.hit.mapper.HitMapper;
 import ru.practicum.stats.hit.mapper.ViewStatsMapper;
 import ru.practicum.stats.hit.repository.EndpointHitRepository;
-
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
