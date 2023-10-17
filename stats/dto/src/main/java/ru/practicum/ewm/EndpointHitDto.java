@@ -1,11 +1,11 @@
 package ru.practicum.ewm;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
+@AllArgsConstructor
 @Setter
+@NoArgsConstructor
 @Builder
 public class EndpointHitDto {
     private String app;

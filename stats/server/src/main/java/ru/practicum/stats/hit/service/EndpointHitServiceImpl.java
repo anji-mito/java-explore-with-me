@@ -7,6 +7,8 @@ import ru.practicum.stats.hit.mapper.HitMapper;
 import ru.practicum.stats.hit.mapper.ViewStatsMapper;
 import ru.practicum.stats.hit.repository.EndpointHitRepository;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -33,16 +35,14 @@ public class EndpointHitServiceImpl implements EndpointHitService {
     }
 
     @Override
-    public List<ViewStatsDto> getStats(String start, String end, List<String> uris, boolean isUniqueIP) {
-        LocalDateTime startDT = LocalDateTime.parse(start, DATE_TIME_FORMAT);
-        LocalDateTime endDT = LocalDateTime.parse(end, DATE_TIME_FORMAT);
+    public List<ViewStatsDto> getStats(List<String> uris, boolean isUniqueIP) {
         if (isUniqueIP) {
-            return endpointHitRepository.findViewStatsUniqueIp(startDT, endDT, uris)
+            return endpointHitRepository.findViewStatsUniqueIp(uris)
                     .stream()
                     .map(viewStatsMapper::toDto)
                     .collect(Collectors.toList());
         } else {
-            return endpointHitRepository.findViewStats(startDT, endDT, uris)
+            return endpointHitRepository.findViewStats(uris)
                     .stream()
                     .map(viewStatsMapper::toDto)
                     .collect(Collectors.toList());

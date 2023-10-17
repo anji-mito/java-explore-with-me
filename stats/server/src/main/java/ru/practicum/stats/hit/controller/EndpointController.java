@@ -22,12 +22,11 @@ public class EndpointController {
 
     @GetMapping("/stats")
     @ResponseStatus(HttpStatus.OK)
-    public List<ViewStatsDto> get(@RequestParam String start,
-            @RequestParam String end,
+    public List<ViewStatsDto> get(
             @RequestParam(required = false) List<String> uris,
             @RequestParam(defaultValue = "false") boolean unique) {
-        log.info("get start={}, end={}, uris={}, unique={}", start, end, uris, unique);
-        return endpointHitService.getStats(start, end, uris, unique);
+        log.info("get uris={}, unique={}", uris, unique);
+        return endpointHitService.getStats(uris, unique);
     }
 
     @PostMapping(path = "/hit")

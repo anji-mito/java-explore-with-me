@@ -1,53 +1,43 @@
 package ru.practicum.ewm.client.hit;
 
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 import ru.practicum.ewm.EndpointHitDto;
 import ru.practicum.ewm.ViewStatsDto;
-
+import org.springframework.web.reactive.function.client.WebClient;
 import java.util.*;
 
 @Service
 public class EndpointControllerClient {
-    private static final String BASE_URL = "http://localhost:9090";
-    private static final String GET_STATS_URL = BASE_URL + "/stats";
-    private static final String ADD_HIT_URL = BASE_URL + "/hits";
 
-    private final RestTemplate restTemplate;
+    private final WebClient webClient;
 
     public EndpointControllerClient() {
-        this.restTemplate = new RestTemplate();
+        this.webClient = WebClient.builder().baseUrl("http://localhost:9090").build();
     }
 
-    public List<ViewStatsDto> getStats(String start, String end, List<String> uris, boolean unique) {
-        String url = GET_STATS_URL + "?start={start}&end={end}&uris={uris}&unique={unique}";
-
-        ResponseEntity<ViewStatsDto[]> response = restTemplate.getForEntity(url, ViewStatsDto[].class,
-                start, end, uris, unique);
-
-        if (response.getStatusCode().is2xxSuccessful() && response.hasBody()) {
-            return Arrays.asList(Objects.requireNonNull(response.getBody()));
-        } else {
-            return Collections.emptyList();
-        }
+    public List<ViewStatsDto> getStats(List<String> uris, boolean unique) {
+        return webClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/stats")
+                        .queryParam("uris", uris)
+                        .queryParam("unique", unique)
+                        .build())
+                .accept(MediaType.APPLICATION_JSON)
+                .retrieve()
+                .bodyToMono(new ParameterizedTypeReference<List<ViewStatsDto>>() {})
+                .block();
     }
 
-    public EndpointHitDto addHit(EndpointHitDto endpointHitDto) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
 
-        HttpEntity<EndpointHitDto> requestEntity = new HttpEntity<>(endpointHitDto, headers);
-
-        ResponseEntity<EndpointHitDto> response = restTemplate.postForEntity(ADD_HIT_URL, requestEntity,
-                EndpointHitDto.class);
-
-        if (response.getStatusCode().is2xxSuccessful() && response.hasBody()) {
-            return response.getBody();
-        }
-        return null;
+    public void createHit(EndpointHitDto endpointHitDto) {
+        webClient.post()
+                .uri("/hit")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(endpointHitDto)
+                .retrieve()
+                .bodyToMono(EndpointHitDto.class)
+                .block();
     }
 }

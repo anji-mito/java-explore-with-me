@@ -22,11 +22,11 @@ CREATE TABLE IF NOT EXISTS locations (
 );
 CREATE TABLE IF NOT EXISTS event (
     id                  SERIAL PRIMARY KEY,
-    ANNOTATION          VARCHAR(3000),
+    ANNOTATION          VARCHAR(2000),
     category_id         BIGINT,
     confirm_requests    BIGINT,
     created_on          TIMESTAMP,
-    description         VARCHAR(2000),
+    description         VARCHAR(7000),
     event_date          TIMESTAMP,
     initiator_id        BIGINT,
     location_id         BIGINT,
@@ -35,9 +35,15 @@ CREATE TABLE IF NOT EXISTS event (
     published_on        TIMESTAMP,
     request_moderation  BOOLEAN,
     state               VARCHAR(50),
-    title               VARCHAR(2000),
+    title               VARCHAR(125),
     views               BIGINT,
     CONSTRAINT FK_category_id FOREIGN KEY (category_id) REFERENCES categories (id),
     CONSTRAINT FK_initiator_id FOREIGN KEY (initiator_id) REFERENCES users (id),
     CONSTRAINT FK_location_id FOREIGN KEY (location_id) REFERENCES locations (id)
+);
+
+CREATE TABLE IF NOT EXISTS compilations (
+    id                  SERIAL PRIMARY KEY,
+    title               VARCHAR(50),
+    pinned              BOOLEAN
 );
