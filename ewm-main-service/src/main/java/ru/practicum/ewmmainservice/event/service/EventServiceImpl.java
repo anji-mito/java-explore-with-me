@@ -25,7 +25,7 @@ public class EventServiceImpl implements EventService {
     private final EventMapper eventMapper;
 
     @Override
-    public List<EventShortDto> getEvents(String text, List<Long> categories, boolean paid, LocalDateTime rangeStart,
+    public List<EventShortDto> getEvents(String text, List<Long> categories, Boolean paid, LocalDateTime rangeStart,
             LocalDateTime rangeEnd, boolean onlyAvailable, SortEventsBy sort, int from, int size) {
         return eventRepository.FilterBy(text, categories, paid, rangeStart, rangeEnd, State.PUBLISHED,
                         PageRequest.of(from, size))
@@ -125,12 +125,25 @@ public class EventServiceImpl implements EventService {
         var foundEvent = eventRepository.findById(eventId)
                 .orElseThrow(() -> new NotFoundException("Событие с id: " + eventId + " не был найден"));
         var event = eventMapper.toEntity(dto);
-        if (dto.getStateAction() == StateAction.PUBLISH_EVENT && foundEvent.getState() == State.PENDING) {
+        if (dto.getStateAction() == StateAction.PUBLISH_EVENT && foundEvent.getState() == State.PUBLISHED) {
+            throw new ConflictException("Событие уже опубликовано");
+        } else if (dto.getStateAction() == StateAction.REJECT_EVENT && foundEvent.getState() == State.PUBLISHED) {
+            throw new ConflictException("Нельзя отклонить уже опубликованое событие");
+        } else if (dto.getStateAction() == StateAction.PUBLISH_EVENT && foundEvent.getState() == State.PENDING) {
             foundEvent.setState(State.PUBLISHED);
             foundEvent.setPublishedOn(LocalDateTime.now());
-        }
-        if (dto.getStateAction() == StateAction.CANCEL_REVIEW && foundEvent.getState() != State.PUBLISHED) {
-            throw new ConflictException("событие можно отклонить, только если оно еще не опубликовано");
+        } else if (dto.getStateAction() == StateAction.CANCEL_REVIEW && foundEvent.getState() != State.PUBLISHED) {
+            throw new ConflictException("Нельзя отменить уже опубликованое событие");
+        } else if (dto.getStateAction() == StateAction.PUBLISH_EVENT && foundEvent.getState() == State.CANCELED) {
+            throw new ConflictException("Нельзя опубликовать уже отмененное событие");
+        } else if (dto.getStateAction() == StateAction.REJECT_EVENT && foundEvent.getState() != State.PENDING) {
+            foundEvent.setState(State.CANCELED);
+        } else if (dto.getStateAction() == StateAction.REJECT_EVENT) {
+            foundEvent.setState(State.CANCELED);
+        } else if (dto.getStateAction() == StateAction.CANCEL_REVIEW) {
+            foundEvent.setState(State.CANCELED);
+        } else if (dto.getStateAction() == StateAction.SEND_TO_REVIEW) {
+            foundEvent.setState(State.PENDING);
         }
         if (event.getAnnotation() != null) {
             foundEvent.setAnnotation(event.getAnnotation());
@@ -162,19 +175,7 @@ public class EventServiceImpl implements EventService {
         if (event.getTitle() != null) {
             foundEvent.setTitle(event.getTitle());
         }
-        if (dto.getStateAction() == StateAction.CANCEL_REVIEW) {
-            foundEvent.setState(State.CANCELED);
-        }
-        if (dto.getStateAction() == StateAction.SEND_TO_REVIEW) {
-            foundEvent.setState(State.PENDING);
-        }
         return eventMapper.toDto(foundEvent);
-    }
-
-    @Override
-    public List<EventFullDto> getEvents(List<Integer> users, List<String> states, List<Integer> categories,
-            String rangeStart, String rangeEnd, int from, int size) {
-        return null;
     }
 
     @Override

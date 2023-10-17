@@ -7,8 +7,9 @@ import java.util.List;
 
 public interface EventService {
     //PUBLIC
-    List<EventShortDto> getEvents(String text, List<Long> categories, boolean paid,
-            LocalDateTime rangeStart, LocalDateTime rangeEnd, boolean onlyAvailable, SortEventsBy sort, int from, int size);
+    List<EventShortDto> getEvents(String text, List<Long> categories, Boolean paid,
+            LocalDateTime rangeStart, LocalDateTime rangeEnd, boolean onlyAvailable, SortEventsBy sort, int from,
+            int size);
 
     EventFullDto getById(long id);
 
@@ -23,9 +24,6 @@ public interface EventService {
 
     //ADMIN
     EventFullDto update(long id, UpdateEventAdminRequest dto);
-
-    List<EventFullDto> getEvents(List<Integer> users, List<String> states, List<Integer> categories,
-            String rangeStart, String rangeEnd, int from, int size);
 
     List<EventFullDto> search(List<Long> users, List<State> states, List<Long> categories, LocalDateTime rangeStart,
             LocalDateTime rangeEnd, int from, int size);

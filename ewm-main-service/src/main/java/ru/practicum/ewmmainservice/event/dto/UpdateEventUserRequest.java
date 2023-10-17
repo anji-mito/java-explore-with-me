@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import ru.practicum.ewmmainservice.event.model.Location;
+
 import javax.validation.constraints.Size;
 
 @AllArgsConstructor

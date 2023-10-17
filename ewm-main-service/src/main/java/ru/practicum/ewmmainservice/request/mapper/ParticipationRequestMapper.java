@@ -19,6 +19,7 @@ public class ParticipationRequestMapper {
                 .event(request.getEvent().getId())
                 .build();
     }
+
     public ParticipationRequest toEntity(ParticipationRequestDto dto) {
         return ParticipationRequest.builder()
                 .id(dto.getId())

@@ -18,10 +18,6 @@ public class CategoryMapper {
         return modelMapper.map(category, CategoryDto.class);
     }
 
-    public Category toEntity(CategoryDto categoryDto) {
-        return modelMapper.map(categoryDto, Category.class);
-    }
-
     public Category toEntity(NewCategoryDto categoryDto) {
         return modelMapper.map(categoryDto, Category.class);
     }

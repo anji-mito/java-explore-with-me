@@ -9,9 +9,9 @@ import ru.practicum.ewmmainservice.request.model.Status;
 @Setter
 @NoArgsConstructor
 public class ParticipationRequestDto {
-    private String created;
     long id;
     long event;
     long requester;
     Status status;
+    private String created;
 }

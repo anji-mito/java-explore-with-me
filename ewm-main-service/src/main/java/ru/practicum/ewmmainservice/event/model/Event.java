@@ -1,7 +1,6 @@
 package ru.practicum.ewmmainservice.event.model;
 
 import lombok.*;
-import org.hibernate.annotations.Cascade;
 import ru.practicum.ewmmainservice.category.model.Category;
 import ru.practicum.ewmmainservice.event.dto.State;
 import ru.practicum.ewmmainservice.user.model.User;
@@ -20,7 +19,7 @@ public class Event {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    @Column(length = 3000)
+    @Column(length = 2000)
     private String annotation;
 
     @OneToOne
@@ -32,7 +31,7 @@ public class Event {
 
     @Column(name = "created_on")
     private LocalDateTime createdOn;
-    @Column(length = 1000)
+    @Column(length = 7000)
     private String description;
 
     @Column(name = "event_date")
@@ -57,7 +56,7 @@ public class Event {
 
     @Enumerated(EnumType.STRING)
     private State state;
-
+    @Column(length = 120)
     private String title;
 
     private long views;

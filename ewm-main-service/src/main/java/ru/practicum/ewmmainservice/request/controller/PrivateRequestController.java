@@ -19,6 +19,7 @@ import java.util.List;
 @AllArgsConstructor
 public class PrivateRequestController {
     private final ParticipationRequestService requestService;
+
     @PostMapping("/{userId}/requests")
     @ResponseStatus(HttpStatus.CREATED)
     public ParticipationRequestDto create(@PathVariable Long userId, @RequestParam Long eventId) {
@@ -35,6 +36,7 @@ public class PrivateRequestController {
     public ParticipationRequestDto cancelRequest(@PathVariable Long userId, @PathVariable Long requestsId) {
         return requestService.cancelRequest(userId, requestsId);
     }
+
     @PatchMapping("/{userId}/events/{eventId}/requests")
     public EventRequestStatusUpdateResult updateStatuses(
             @PathVariable Long userId,
@@ -42,6 +44,7 @@ public class PrivateRequestController {
             @RequestBody EventRequestStatusUpdateRequest dto) {
         return requestService.updateStatus(userId, eventId, dto);
     }
+
     @GetMapping("/{userId}/events/{eventId}/requests")
     public List<ParticipationRequestDto> getRequestsByInitiatorAndEvent(
             @Valid @PathVariable @NotNull Long userId,

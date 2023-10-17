@@ -3,6 +3,7 @@ package ru.practicum.ewmmainservice.event.controller;
 import lombok.AllArgsConstructor;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewmmainservice.event.dto.EventFullDto;
 import ru.practicum.ewmmainservice.event.dto.State;
@@ -10,6 +11,7 @@ import ru.practicum.ewmmainservice.event.dto.UpdateEventAdminRequest;
 import ru.practicum.ewmmainservice.event.service.EventService;
 import ru.practicum.ewmmainservice.exception.BadRequestException;
 
+import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -17,6 +19,7 @@ import static ru.practicum.ewmmainservice.utility.DateTimeFormatter.API_DATE_TIM
 import static ru.practicum.ewmmainservice.utility.DateTimeFormatter.apiDateTimePattern;
 
 @RestController
+@Validated
 @RequestMapping("/admin/events")
 @AllArgsConstructor
 public class AdminEventController {
@@ -25,7 +28,7 @@ public class AdminEventController {
     @PatchMapping("/{eventId}")
     public EventFullDto updateEvent(
             @PathVariable long eventId,
-            @RequestBody UpdateEventAdminRequest event) {
+            @RequestBody @Valid UpdateEventAdminRequest event) {
         if (event.getEventDate() != null) {
             var eventDate = LocalDateTime.parse(event.getEventDate(), API_DATE_TIME_FORMAT);
             if (eventDate.isBefore(LocalDateTime.now().plusHours(2))) {

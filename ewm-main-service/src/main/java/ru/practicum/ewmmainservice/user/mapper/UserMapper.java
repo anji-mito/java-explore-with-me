@@ -19,6 +19,7 @@ public class UserMapper {
     public UserDto toDto(User user) {
         return modelMapper.map(user, UserDto.class);
     }
+
     public UserShortDto toShortDto(User user) {
         if (user == null) {
             return null;

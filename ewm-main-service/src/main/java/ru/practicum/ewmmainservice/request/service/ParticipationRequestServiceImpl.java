@@ -2,6 +2,7 @@ package ru.practicum.ewmmainservice.request.service;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.ewmmainservice.event.dto.State;
 import ru.practicum.ewmmainservice.event.repository.EventRepository;
 import ru.practicum.ewmmainservice.exception.ConflictException;
 import ru.practicum.ewmmainservice.exception.NotFoundException;
@@ -16,6 +17,7 @@ import ru.practicum.ewmmainservice.user.repository.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -42,10 +44,27 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
     @Transactional
     @Override
     public ParticipationRequestDto createRequest(long userId, long eventId) {
+        if (requestRepository.findByRequesterIdAndEventId(userId, eventId).isPresent()) {
+            throw new ConflictException(
+                    "Пользователь с id: " + userId + " уже подал заявку на событие с id: " + eventId);
+        }
         var requester = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("Пользователь с id: " + userId + " не был найден"));
         var event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new NotFoundException("Событие с id: " + eventId + " не был найден"));
+        if (event.getState() != State.PUBLISHED) {
+            throw new ConflictException("Событие с id: " + eventId + " еще не опубликован");
+        }
+        if (Objects.equals(event.getInitiator().getId(), userId)) {
+            throw new ConflictException(
+                    "Пользователь с id: " + userId + " является инициатором событии с id: " + eventId);
+        }
+        if (event.getParticipantLimit() == event.getConfirmedRequests() && event.getParticipantLimit() != 0) {
+            throw new ConflictException("У событии с id: " + eventId + " все места уже заняты");
+        }
+        if (!event.isRequestModeration()) {
+            event.setConfirmedRequests(event.getConfirmedRequests() + 1);
+        }
         var request = ParticipationRequest.builder()
                 .created(LocalDateTime.now())
                 .requester(requester)
@@ -87,12 +106,15 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
                     throw new ConflictException("Заявка уже была подтверждена или отменена");
                 }
                 request.setStatus(dto.getStatus());
-                foundEvent.setConfirmedRequests(foundEvent.getConfirmedRequests()+1);
+                foundEvent.setConfirmedRequests(foundEvent.getConfirmedRequests() + 1);
                 result.getConfirmedRequests().add(requestMapper.toDto(request));
             }
         }
         if (dto.getStatus() == Status.REJECTED) {
             for (ParticipationRequest request : foundRequests) {
+                if (request.getStatus() == Status.CONFIRMED) {
+                    throw new ConflictException("Заявка уже была подтверждена");
+                }
                 request.setStatus(dto.getStatus());
                 result.getRejectedRequests().add(requestMapper.toDto(request));
             }

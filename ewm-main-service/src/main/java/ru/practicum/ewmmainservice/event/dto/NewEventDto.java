@@ -1,15 +1,13 @@
 package ru.practicum.ewmmainservice.event.dto;
+
 import lombok.*;
-import org.springframework.format.annotation.DateTimeFormat;
 import ru.practicum.ewmmainservice.event.model.Location;
+
 import javax.validation.constraints.*;
 
-import java.time.LocalDateTime;
-
-import static ru.practicum.ewmmainservice.utility.DateTimeFormatter.apiDateTimePattern;
-
+@AllArgsConstructor
+@NoArgsConstructor
 @Getter
-@Setter
 @Builder
 public class NewEventDto {
     @NotNull
@@ -28,9 +26,9 @@ public class NewEventDto {
     private String eventDate;
     @NotNull
     private Location location;
-    private boolean paid;
-    private Integer participantLimit;
-    private boolean requestModeration;
+    private boolean paid = false;
+    private int participantLimit = 0;
+    private boolean requestModeration = true;
     @NotNull
     @NotEmpty
     @NotBlank

@@ -1,7 +1,6 @@
 package ru.practicum.ewmmainservice.exception.controller;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -60,6 +59,7 @@ public class ErrorHandler {
                 .timestamp(LocalDateTime.now().format(API_DATE_TIME_FORMAT))
                 .build();
     }
+
     @ExceptionHandler(org.h2.jdbc.JdbcSQLIntegrityConstraintViolationException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
     public ApiError handleIntegrityConstraintViolation(Exception e) {
@@ -73,6 +73,7 @@ public class ErrorHandler {
                 .timestamp(LocalDateTime.now().format(API_DATE_TIME_FORMAT))
                 .build();
     }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ApiError handleValidationExceptions(MethodArgumentNotValidException e) {
