@@ -21,7 +21,7 @@ services:
       - POSTGRES_DB=ewm-db
       - POSTGRES_USER=ewm
       - POSTGRES_PASSWORD=ewm
-  stats-server:
+  stats:
     build: stats/server
     container_name: stats
     ports:
