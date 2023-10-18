@@ -9,16 +9,14 @@ spring:
         hibernate:
           dialect: org.hibernate.dialect.PostgreSQL10Dialect
           format_sql: true
-  sql:
-    init:
-      mode: always
-
+    sql:
+      init:
+        mode: always
   datasource:
     driverClassName: org.postgresql.Driver
     url: jdbc:postgresql://localhost:5432/stats
     username: root
     password: root
-
   config:
     activate:
       on-profile: ci,test
