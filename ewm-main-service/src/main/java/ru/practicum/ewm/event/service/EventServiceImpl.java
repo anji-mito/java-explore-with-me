@@ -53,7 +53,7 @@ public class EventServiceImpl implements EventService {
             var hit = EndpointHitDto.builder()
                     .app("ewm-main-service")
                     .uri("/events/" + id)
-                    .ip("192.168.1.6")
+                    .ip("192.168.1.111")
                     .timestamp(LocalDateTime.now().format(API_DATE_TIME_FORMAT))
                     .build();
             hitClient.createHit(hit);
