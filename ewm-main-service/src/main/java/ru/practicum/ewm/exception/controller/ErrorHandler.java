@@ -1,10 +1,13 @@
 package ru.practicum.ewm.exception.controller;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.context.request.WebRequest;
 import ru.practicum.ewm.exception.BadRequestException;
 import ru.practicum.ewm.exception.ConflictException;
 import ru.practicum.ewm.exception.NotFoundException;
@@ -70,6 +73,20 @@ public class ErrorHandler {
                         .collect(Collectors.toUnmodifiableList()))
                 .status(HttpStatus.CONFLICT)
                 .reason(e.getCause().toString())
+                .timestamp(LocalDateTime.now().format(API_DATE_TIME_FORMAT))
+                .build();
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ApiError handleDataIntegrityViolationException(DataIntegrityViolationException ex, WebRequest request) {
+        return ApiError.builder()
+                .message(ex.getMessage())
+                .errors(Arrays.stream(ex.getStackTrace())
+                        .map(StackTraceElement::toString)
+                        .collect(Collectors.toUnmodifiableList()))
+                .status(HttpStatus.CONFLICT)
+                .reason(ex.getCause().toString())
                 .timestamp(LocalDateTime.now().format(API_DATE_TIME_FORMAT))
                 .build();
     }

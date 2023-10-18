@@ -1,6 +1,7 @@
 package ru.practicum.ewm.event.service;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +24,7 @@ import java.util.stream.Collectors;
 
 import static ru.practicum.ewm.utility.DateTimeFormatter.API_DATE_TIME_FORMAT;
 
+@Slf4j
 @Service
 @AllArgsConstructor
 public class EventServiceImpl implements EventService {
@@ -47,17 +49,21 @@ public class EventServiceImpl implements EventService {
     public EventFullDto getById(long id) {
         var foundEvent = eventRepository.findByIdAndState(id, State.PUBLISHED)
                 .orElseThrow(() -> new NotFoundException("Событие с id " + id + " не был найден"));
-        var hit = EndpointHitDto.builder()
-                .app("ewm-main-service")
-                .uri("/events/" + id)
-                .ip("192.168.1.6")
-                .timestamp(LocalDateTime.now().format(API_DATE_TIME_FORMAT))
-                .build();
-        hitClient.createHit(hit);
-        List<String> uris = List.of("/events/" + id);
-        List<ViewStatsDto> statsDto
-                = hitClient.getStats(uris, true);
-        foundEvent.setViews(statsDto.get(0).getHits());
+        try {
+            var hit = EndpointHitDto.builder()
+                    .app("ewm-main-service")
+                    .uri("/events/" + id)
+                    .ip("192.168.1.6")
+                    .timestamp(LocalDateTime.now().format(API_DATE_TIME_FORMAT))
+                    .build();
+            hitClient.createHit(hit);
+            List<String> uris = List.of("/events/" + id);
+            List<ViewStatsDto> statsDto
+                    = hitClient.getStats(uris, true);
+            foundEvent.setViews(statsDto.get(0).getHits());
+        } catch (Exception e) {
+            log.error("Сервис статистики недоступен, не удалось обновить данные о просмотрах");
+        }
         return eventMapper.toDto(foundEvent);
     }
 

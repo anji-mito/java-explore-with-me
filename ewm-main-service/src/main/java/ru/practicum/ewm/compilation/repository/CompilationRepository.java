@@ -10,6 +10,6 @@ import ru.practicum.ewm.compilation.model.Compilation;
 
 @Repository
 public interface CompilationRepository extends JpaRepository<Compilation, Long> {
-    @Query("SELECT c FROM Compilation AS c WHERE (:pinned IS NULL OR c.pinned = :pinned)")
-    Page<Compilation> findAllFilterBy(@Param("pinned")Boolean pinned, Pageable pageable);
+    @Query("SELECT c FROM Compilation AS c WHERE (COALESCE(:pinned, c.pinned) = c.pinned)")
+    Page<Compilation> findAllFilterBy(@Param("pinned") Boolean pinned, Pageable pageable);
 }

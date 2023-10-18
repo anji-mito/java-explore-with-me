@@ -14,7 +14,7 @@ public class EndpointControllerClient {
     private final WebClient webClient;
 
     public EndpointControllerClient() {
-        this.webClient = WebClient.builder().baseUrl("http://localhost:9090").build();
+        this.webClient = WebClient.builder().baseUrl("http://stats:9090").build();
     }
 
     public List<ViewStatsDto> getStats(List<String> uris, boolean unique) {
