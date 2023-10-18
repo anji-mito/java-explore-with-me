@@ -2,6 +2,7 @@ package ru.practicum.stats.hit.controller;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -17,15 +18,16 @@ import java.util.List;
 @RestController
 @Validated
 public class EndpointController {
+    private static final String API_DATE_TIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
     private final EndpointHitService endpointHitService;
 
     @GetMapping("/stats")
     @ResponseStatus(HttpStatus.OK)
     public List<ViewStatsDto> get(
-            @RequestParam(required = false) LocalDateTime start,
-            @RequestParam(required = false) LocalDateTime end,
+            @RequestParam(required = false) @DateTimeFormat(pattern = API_DATE_TIME_PATTERN) LocalDateTime start,
+            @RequestParam(required = false) @DateTimeFormat(pattern = API_DATE_TIME_PATTERN) LocalDateTime end,
             @RequestParam(required = false) List<String> uris,
-            @RequestParam(defaultValue = "false") boolean unique) {
+            @RequestParam(defaultValue = "false") Boolean unique) {
         log.info("get uris={}, unique={}", uris, unique);
         return endpointHitService.getStats(start, end, uris, unique);
     }
