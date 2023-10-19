@@ -37,6 +37,18 @@ public class EventServiceImpl implements EventService {
     @Override
     public List<EventShortDto> getEvents(String text, List<Long> categories, Boolean paid, LocalDateTime rangeStart,
             LocalDateTime rangeEnd, boolean onlyAvailable, SortEventsBy sort, int from, int size) {
+        try {
+            var hit = EndpointHitDto.builder()
+                    .app("ewm-main-service")
+                    .uri("/events")
+                    .ip("192.168.1.111")
+                    .timestamp(LocalDateTime.now().format(API_DATE_TIME_FORMAT))
+                    .build();
+            hitClient.createHit(hit);
+            List<String> uris = List.of("/events");
+        } catch (Exception e) {
+            log.error("Сервис статистики недоступен, не удалось обновить данные о просмотрах");
+        }
         return eventRepository.filterBy(text, categories, paid, rangeStart, rangeEnd, State.PUBLISHED,
                         PageRequest.of(from, size))
                 .getContent()
@@ -59,7 +71,7 @@ public class EventServiceImpl implements EventService {
             hitClient.createHit(hit);
             List<String> uris = List.of("/events/" + id);
             List<ViewStatsDto> statsDto
-                    = hitClient.getStats(uris, true);
+                    = hitClient.getStats(LocalDateTime.now().minusYears(5), LocalDateTime.now().plusYears(10), uris, true);
             foundEvent.setViews(statsDto.get(0).getHits());
         } catch (Exception e) {
             log.error("Сервис статистики недоступен, не удалось обновить данные о просмотрах");
