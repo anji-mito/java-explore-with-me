@@ -10,8 +10,6 @@ import javax.validation.constraints.*;
 @NoArgsConstructor
 @Builder
 public class NewCategoryDto {
-    @NotNull
-    @NotEmpty
     @NotBlank
     @Size(min = 1, max = 50)
     private String name;

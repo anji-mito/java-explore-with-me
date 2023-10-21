@@ -14,15 +14,11 @@ import static ru.practicum.ewm.utility.DateTimeFormatter.API_DATE_TIME_PATTERN;
 @AllArgsConstructor
 @NoArgsConstructor
 public class NewEventDto {
-    @NotNull
-    @NotEmpty
     @NotBlank
     @Size(min = 20, max = 2000)
     private String annotation;
     @NotNull
     private Long category;
-    @NotNull
-    @NotEmpty
     @NotBlank
     @Size(min = 20, max = 7000)
     private String description;
@@ -34,8 +30,6 @@ public class NewEventDto {
     private boolean paid = false;
     private int participantLimit = 0;
     private boolean requestModeration = true;
-    @NotNull
-    @NotEmpty
     @NotBlank
     @Size(min = 3, max = 120)
     private String title;

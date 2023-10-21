@@ -10,13 +10,9 @@ import javax.validation.constraints.*;
 @NoArgsConstructor
 @Builder
 public class NewUserRequest {
-    @NotNull
-    @NotEmpty
     @NotBlank
     @Size(min = 2, max = 250)
     private String name;
-    @NotNull
-    @NotEmpty
     @NotBlank
     @Email
     @Size(min = 6, max = 254)
