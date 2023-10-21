@@ -5,7 +5,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.category.dto.CategoryDto;
 import ru.practicum.ewm.category.service.CategoryService;
 import ru.practicum.ewm.exception.BadRequestException;
-
 import java.util.List;
 
 @RestController
