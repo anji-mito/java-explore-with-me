@@ -37,7 +37,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     @Transactional
     public CategoryDto update(Long id, CategoryDto dto) {
-        Category categoryToUpdate = categoryRepository
+        var categoryToUpdate = categoryRepository
                 .findById(id)
                 .orElseThrow(() -> new NotFoundException("Категория с id " + id + " не была найдена"));
         var name = dto.getName();
