@@ -68,30 +68,24 @@ public class EventMapper {
     }
 
     public Event toEntity(UpdateEventAdminRequest dto) {
-        return Event.builder()
-                .annotation(dto.getAnnotation() != null ? dto.getAnnotation() : null)
-                .category(dto.getCategory() != 0 ? Category.builder().id(dto.getCategory()).build() : null)
-                .description(dto.getDescription() != null ? dto.getDescription() : null)
-                .eventDate(dto.getEventDate())
-                .location(dto.getLocation() != null ? dto.getLocation() : null)
-                .paid(dto.getPaid() != null ? dto.getPaid() : false)
-                .participantLimit(dto.getParticipantLimit() != null ? dto.getParticipantLimit() : 0)
-                .requestModeration(dto.getRequestModeration() != null ? dto.getRequestModeration() : false)
-                .title(dto.getTitle() != null ? dto.getTitle() : null)
-                .build();
+        return toEntity((UpdateEventRequest) dto);
     }
 
     public Event toEntity(UpdateEventUserRequest dto) {
+        return toEntity((UpdateEventRequest) dto);
+    }
+
+    public <T extends UpdateEventRequest> Event toEntity(T dto) {
         return Event.builder()
-                .annotation(dto.getAnnotation() != null ? dto.getAnnotation() : null)
+                .annotation(dto.getAnnotation())
                 .category(dto.getCategory() != 0 ? Category.builder().id(dto.getCategory()).build() : null)
-                .description(dto.getDescription() != null ? dto.getDescription() : null)
+                .description(dto.getDescription())
                 .eventDate(dto.getEventDate())
-                .location(dto.getLocation() != null ? dto.getLocation() : null)
+                .location(dto.getLocation())
                 .paid(dto.getPaid() != null ? dto.getPaid() : false)
                 .participantLimit(dto.getParticipantLimit() != null ? dto.getParticipantLimit() : 0)
                 .requestModeration(dto.getRequestModeration() != null ? dto.getRequestModeration() : false)
-                .title(dto.getTitle() != null ? dto.getTitle() : null)
+                .title(dto.getTitle())
                 .build();
     }
 }

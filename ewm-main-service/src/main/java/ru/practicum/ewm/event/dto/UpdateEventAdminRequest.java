@@ -13,7 +13,7 @@ import static ru.practicum.ewm.utility.DateTimeFormatter.API_DATE_TIME_PATTERN;
 @Builder
 @Getter
 @NoArgsConstructor
-public class UpdateEventAdminRequest {
+public class UpdateEventAdminRequest extends UpdateEventRequest {
     @Size(min = 20, max = 2000)
     private String annotation;
     private long category;

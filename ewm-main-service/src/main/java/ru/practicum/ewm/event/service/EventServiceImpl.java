@@ -36,7 +36,7 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public List<EventShortDto> getEvents(String text, List<Long> categories, Boolean paid, LocalDateTime rangeStart,
-            LocalDateTime rangeEnd, boolean onlyAvailable, SortEventsBy sort, int from, int size) {
+                                         LocalDateTime rangeEnd, boolean onlyAvailable, SortEventsBy sort, int from, int size) {
         try {
             var hit = EndpointHitDto.builder()
                     .app("ewm-main-service")
@@ -83,8 +83,9 @@ public class EventServiceImpl implements EventService {
         var foundEvent = getEvent(eventId);
         verifyEventOwnership(userId, foundEvent);
         assertEventIsNotPublished(foundEvent);
+        updateEventState(dto, foundEvent);
 
-        var updatedEvent = applyUpdatesToEvent(foundEvent, dto);
+        var updatedEvent = updateEventFromDto(foundEvent, dto);
 
         return eventMapper.toDto(updatedEvent);
     }
@@ -122,18 +123,18 @@ public class EventServiceImpl implements EventService {
     @Override
     public EventFullDto update(long eventId, UpdateEventAdminRequest dto) {
         var foundEvent = findEventById(eventId);
-        var event = eventMapper.toEntity(dto);
         if (dto.getStateAction() != null) {
             processStateAction(foundEvent, dto.getStateAction());
         }
-        updateEventFromDto(foundEvent, event, dto);
+        updateEventFromDto(foundEvent, dto);
 
         return eventMapper.toDto(foundEvent);
     }
+
     //TODO: gpt предлагает создать EventSearchCriteria, узнать про то что может ли Page<T> вернуть null или всегда возвращает пустой список
     @Override
     public List<EventFullDto> search(List<Long> users, List<State> states, List<Long> categories,
-            LocalDateTime rangeStart, LocalDateTime rangeEnd, int from, int size) {
+                                     LocalDateTime rangeStart, LocalDateTime rangeEnd, int from, int size) {
         return eventRepository.filterBy(users, states, categories, rangeStart, rangeEnd, PageRequest.of(from, size))
                 .getContent()
                 .stream()
@@ -159,24 +160,10 @@ public class EventServiceImpl implements EventService {
         }
     }
 
-    private Event applyUpdatesToEvent(Event foundEvent, UpdateEventUserRequest dto) {
-        var event = eventMapper.toEntity(dto);
-        if (event.getAnnotation() != null) foundEvent.setAnnotation(event.getAnnotation());
-        categoryRepository.findById(dto.getCategory()).ifPresent(foundEvent::setCategory);
-        if (event.getDescription() != null) foundEvent.setDescription(event.getDescription());
-        if (event.getEventDate() != null) foundEvent.setEventDate(event.getEventDate());
-        if (event.getLocation() != null) foundEvent.setLocation(event.getLocation());
-        if (dto.getPaid() != null) foundEvent.setPaid(dto.getPaid());
-        if (dto.getParticipantLimit() != null) foundEvent.setParticipantLimit(event.getParticipantLimit());
-        if (dto.getRequestModeration() != null) foundEvent.setRequestModeration(dto.getRequestModeration());
-        if (dto.getStateAction() != null) foundEvent.setState(event.getState());
-        if (event.getTitle() != null) foundEvent.setTitle(event.getTitle());
-
-        updateEventState(dto, foundEvent);
-        return foundEvent;
-    }
-
     private void updateEventState(UpdateEventUserRequest dto, Event foundEvent) {
+        if (dto.getStateAction() == null) {
+            return;
+        }
         if (dto.getStateAction() == StateAction.CANCEL_REVIEW) {
             foundEvent.setState(State.CANCELED);
         }
@@ -221,16 +208,37 @@ public class EventServiceImpl implements EventService {
         }
     }
 
-    private void updateEventFromDto(Event foundEvent, Event event, UpdateEventAdminRequest dto) {
-        if (event.getAnnotation() != null) foundEvent.setAnnotation(event.getAnnotation());
-        if (dto.getCategory() != 0) foundEvent.setCategory(findCategoryById(dto.getCategory()));
-        if (event.getDescription() != null) foundEvent.setDescription(event.getDescription());
-        if (event.getEventDate() != null) foundEvent.setEventDate(event.getEventDate());
-        if (event.getLocation() != null) foundEvent.setLocation(event.getLocation());
-        if (dto.getPaid() != null) foundEvent.setPaid(dto.getPaid());
-        if (dto.getParticipantLimit() != null) foundEvent.setParticipantLimit(event.getParticipantLimit());
-        if (dto.getRequestModeration() != null) foundEvent.setRequestModeration(dto.getRequestModeration());
-        if (event.getTitle() != null) foundEvent.setTitle(event.getTitle());
+    private Event updateEventFromDto(Event foundEvent, UpdateEventRequest dto) {
+        var event = eventMapper.toEntity(dto);
+
+        if (event.getAnnotation() != null) {
+            foundEvent.setAnnotation(event.getAnnotation());
+        }
+        if (dto.getCategory() != 0) {
+            foundEvent.setCategory(findCategoryById(dto.getCategory()));
+        }
+        if (event.getDescription() != null) {
+            foundEvent.setDescription(event.getDescription());
+        }
+        if (event.getEventDate() != null) {
+            foundEvent.setEventDate(event.getEventDate());
+        }
+        if (event.getLocation() != null) {
+            foundEvent.setLocation(event.getLocation());
+        }
+        if (dto.getPaid() != null) {
+            foundEvent.setPaid(dto.getPaid());
+        }
+        if (dto.getParticipantLimit() != null) {
+            foundEvent.setParticipantLimit(event.getParticipantLimit());
+        }
+        if (dto.getRequestModeration() != null) {
+            foundEvent.setRequestModeration(dto.getRequestModeration());
+        }
+        if (event.getTitle() != null) {
+            foundEvent.setTitle(event.getTitle());
+        }
+        return foundEvent;
     }
 
     private Category findCategoryById(long id) {

@@ -38,6 +38,7 @@ public class AdminEventController {
 
         return eventService.update(eventId, event);
     }
+
     @GetMapping
     public List<EventFullDto> search(
             @RequestParam(required = false) List<Long> users,
