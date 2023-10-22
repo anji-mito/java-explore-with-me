@@ -33,16 +33,14 @@ public class EndpointHitServiceImpl implements EndpointHitService {
     }
 
     @Override
-    public List<ViewStatsDto> getStats(String start, String end, List<String> uris, boolean isUniqueIP) {
-        LocalDateTime startDT = LocalDateTime.parse(start, DATE_TIME_FORMAT);
-        LocalDateTime endDT = LocalDateTime.parse(end, DATE_TIME_FORMAT);
+    public List<ViewStatsDto> getStats(LocalDateTime start, LocalDateTime end, List<String> uris, boolean isUniqueIP) {
         if (isUniqueIP) {
-            return endpointHitRepository.findViewStatsUniqueIp(startDT, endDT, uris)
+            return endpointHitRepository.findViewStatsUniqueIp(start, end, uris)
                     .stream()
                     .map(viewStatsMapper::toDto)
                     .collect(Collectors.toList());
         } else {
-            return endpointHitRepository.findViewStats(startDT, endDT, uris)
+            return endpointHitRepository.findViewStats(start, end, uris)
                     .stream()
                     .map(viewStatsMapper::toDto)
                     .collect(Collectors.toList());

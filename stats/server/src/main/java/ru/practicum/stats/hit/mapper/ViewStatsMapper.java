@@ -9,7 +9,6 @@ import ru.practicum.stats.hit.model.ViewStats;
 import java.util.Objects;
 
 @Component
-
 public class ViewStatsMapper {
     @Autowired
     private ModelMapper mapper;
