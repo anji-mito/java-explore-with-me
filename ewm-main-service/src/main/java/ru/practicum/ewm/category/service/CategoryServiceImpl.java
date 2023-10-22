@@ -12,7 +12,6 @@ import ru.practicum.ewm.exception.NotFoundException;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Service
@@ -50,8 +49,7 @@ public class CategoryServiceImpl implements CategoryService {
     public List<CategoryDto> getAll(Integer from, Integer size) {
         return categoryRepository.findAll(PageRequest.of(from, size))
                 .map(categoryMapper::toDto)
-                .stream()
-                .collect(Collectors.toUnmodifiableList());
+                .toList();
     }
 
     @Override

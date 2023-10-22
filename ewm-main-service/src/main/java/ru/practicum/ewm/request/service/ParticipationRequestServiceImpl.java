@@ -35,12 +35,6 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
         this.requestMapper = requestMapper;
     }
 
-    @Override
-    public List<ParticipationRequestDto> getRequestsByUser(long userId) {
-
-        return null;
-    }
-
     @Transactional
     @Override
     public ParticipationRequestDto createRequest(long userId, long eventId) {

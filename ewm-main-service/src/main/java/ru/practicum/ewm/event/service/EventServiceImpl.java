@@ -45,7 +45,6 @@ public class EventServiceImpl implements EventService {
                     .timestamp(LocalDateTime.now().format(API_DATE_TIME_FORMAT))
                     .build();
             hitClient.createHit(hit);
-            List<String> uris = List.of("/events");
         } catch (Exception e) {
             log.error("Сервис статистики недоступен, не удалось обновить данные о просмотрах");
         }
@@ -131,7 +130,7 @@ public class EventServiceImpl implements EventService {
 
         return eventMapper.toDto(foundEvent);
     }
-
+    //TODO: gpt предлагает создать EventSearchCriteria, узнать про то что может ли Page<T> вернуть null или всегда возвращает пустой список
     @Override
     public List<EventFullDto> search(List<Long> users, List<State> states, List<Long> categories,
             LocalDateTime rangeStart, LocalDateTime rangeEnd, int from, int size) {

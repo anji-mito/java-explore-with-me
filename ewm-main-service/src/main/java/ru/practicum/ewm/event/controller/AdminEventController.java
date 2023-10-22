@@ -25,18 +25,19 @@ public class AdminEventController {
     private final EventService eventService;
 
     @PatchMapping("/{eventId}")
-    public EventFullDto updateEvent(
-            @PathVariable long eventId,
-            @RequestBody @Valid UpdateEventAdminRequest event) {
-        if (event.getEventDate() != null) {
-            if (event.getEventDate().isBefore(LocalDateTime.now().plusHours(2))) {
-                throw new BadRequestException(
-                        "дата и время на которые намечено событие не может быть раньше, чем через два часа от текущего момента");
-            }
+    public EventFullDto updateEvent(@PathVariable long eventId,
+                                    @RequestBody @Valid UpdateEventAdminRequest event) {
+        if (event.getEventDate() == null) {
+            return eventService.update(eventId, event);
         }
+
+        if (event.getEventDate().isBefore(LocalDateTime.now().plusHours(2))) {
+            throw new BadRequestException(
+                    "дата и время на которые намечено событие не может быть раньше, чем через два часа от текущего момента");
+        }
+
         return eventService.update(eventId, event);
     }
-
     @GetMapping
     public List<EventFullDto> search(
             @RequestParam(required = false) List<Long> users,
