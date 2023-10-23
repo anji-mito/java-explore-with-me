@@ -16,6 +16,7 @@ import ru.practicum.ewm.user.repository.UserRepository;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Service
@@ -27,22 +28,33 @@ public class CommentServiceIml implements CommentService {
 
     @Override
     public List<CommentDto> getCommentsByUser(long userId) {
-        return null;
+        return commentRepository.findAllByCommentatorId(userId)
+                .stream()
+                .map(commentMapper::toDto)
+                .collect(Collectors.toUnmodifiableList());
     }
 
     @Override
     public List<CommentDto> getCommentsByEvent(long eventId) {
-        return null;
+        return commentRepository.findAllByEventId(eventId)
+                .stream()
+                .map(commentMapper::toDto)
+                .collect(Collectors.toUnmodifiableList());
     }
 
     @Override
-    public List<CommentDto> getCommentById(long commentId) {
-        return null;
+    public CommentDto getCommentById(long commentId) {
+        return commentMapper.toDto(getComment(commentId));
     }
 
     @Override
     public CommentDto create(long userId, long eventId, NewCommentDto dto) {
-        return null;
+        var commentator = getUser(userId);
+        var event = getEvent(eventId);
+        var commentToAdd = commentMapper.toEntity(dto);
+        commentToAdd.setCommentator(commentator);
+        commentToAdd.setEvent(event);
+        return commentMapper.toDto(commentRepository.save(commentToAdd));
     }
 
     @Transactional
