@@ -11,8 +11,6 @@ import static ru.practicum.ewm.utility.DateTimeFormatter.API_DATE_TIME_FORMAT;
 public class CommentMapper {
     public Comment toEntity(NewCommentDto dto) {
         return Comment.builder()
-                .id(dto.getId())
-                .createdOn(dto.getCreatedOn())
                 .text(dto.getText())
                 .build();
     }

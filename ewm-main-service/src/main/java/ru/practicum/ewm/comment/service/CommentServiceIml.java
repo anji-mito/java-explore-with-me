@@ -15,6 +15,7 @@ import ru.practicum.ewm.user.model.User;
 import ru.practicum.ewm.user.repository.UserRepository;
 
 import javax.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -52,6 +53,8 @@ public class CommentServiceIml implements CommentService {
         var commentator = getUser(userId);
         var event = getEvent(eventId);
         var commentToAdd = commentMapper.toEntity(dto);
+        commentToAdd.setModified(false);
+        commentToAdd.setCreatedOn(LocalDateTime.now());
         commentToAdd.setCommentator(commentator);
         commentToAdd.setEvent(event);
         return commentMapper.toDto(commentRepository.save(commentToAdd));

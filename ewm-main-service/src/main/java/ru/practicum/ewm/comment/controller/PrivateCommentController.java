@@ -26,7 +26,7 @@ public class PrivateCommentController {
         return commentService.update(userId, id, text);
     }
 
-    @PostMapping("/{userId}/events/{eventId}/comments/{id}")
+    @PostMapping("/{userId}/events/{eventId}/comments")
     @ResponseStatus(HttpStatus.CREATED)
     public CommentDto create(
             @PathVariable long userId,
