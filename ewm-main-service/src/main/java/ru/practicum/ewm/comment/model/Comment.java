@@ -27,7 +27,7 @@ public class Comment {
     @ManyToOne
     @JoinColumn(name = "event_id", referencedColumnName = "id")
     private Event event;
-    @Column(length = 7000)
+    @Column(length = 2000)
     private String text;
     @Column(name = "created_on")
     private LocalDateTime createdOn;
